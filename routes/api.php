@@ -1,11 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\HealthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/ping', function () {
-    return response()->json([
-        'ok' => true,
-        'ts' => now()->toIso8601String(),
-        'service' => config('app.name'),
-    ]);
+Route::prefix('health')->group(function () {
+    Route::get('/live', [HealthController::class, 'live']);
+    Route::get('/ready', [HealthController::class, 'ready']);
 });
