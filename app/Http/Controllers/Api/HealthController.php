@@ -9,12 +9,14 @@ class HealthController extends Controller
 {
     public function live(): JsonResponse
     {
-        return response()->json(['data' => [
-            'service' => config('app.name'),
-            'version' => config('app.version'),
-            'status'  => 'alive',
-            'ts'      => now()->toIso8601String(),
-        ]], 200);
+        return response()->json([
+            'data' => [
+                'service' => config('app.name'),
+                'version' => config('app.version'),
+                'status' => 'alive',
+                'ts' => now()->toIso8601String(),
+            ]
+        ], 200);
     }
 
     public function ready(HealthCheckService $health): JsonResponse
@@ -22,12 +24,14 @@ class HealthController extends Controller
         $checks = $health->readinessChecks();
         $ok = !in_array(false, $checks, true);
 
-        return response()->json(['data' => [
-            'service' => config('app.name'),
-            'version' => config('app.version'),
-            'status'  => $ok ? 'ready' : 'degraded',
-            'checks'  => $checks,
-            'ts'      => now()->toIso8601String(),
-        ]], $ok ? 200 : 503);
+        return response()->json([
+            'data' => [
+                'service' => config('app.name'),
+                'version' => config('app.version'),
+                'status' => $ok ? 'ready' : 'degraded',
+                'checks' => $checks,
+                'ts' => now()->toIso8601String(),
+            ]
+        ], $ok ? 200 : 503);
     }
 }

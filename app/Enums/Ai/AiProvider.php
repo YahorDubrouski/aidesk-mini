@@ -6,6 +6,6 @@ namespace App\Enums\Ai;
 
 enum AiProvider: string
 {
-    case OpenAI    = 'openai';
+    case OpenAI = 'openai';
     case Anthropic = 'anthropic';
 }

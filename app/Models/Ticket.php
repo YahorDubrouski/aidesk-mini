@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\Ticket\TicketSentiment;
 use App\Enums\Ticket\TicketStatus;
+use App\Enums\Ticket\TicketUrgency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,8 +23,8 @@ use Illuminate\Support\Carbon;
  * @property string $body
  * @property TicketStatus $status
  * @property string|null $category
- * @property string $urgency
- * @property string|null $sentiment
+ * @property TicketUrgency $urgency
+ * @property TicketSentiment|null $sentiment
  * @property string|null $product
  * @property string|null $summary
  * @property Carbon|null $answered_at
@@ -34,6 +36,8 @@ final class Ticket extends Model
     protected $casts = [
         'answered_at' => 'datetime',
         'status' => TicketStatus::class,
+        'urgency' => TicketUrgency::class,
+        'sentiment' => TicketSentiment::class,
     ];
 
     protected $fillable = [

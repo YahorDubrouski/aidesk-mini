@@ -12,7 +12,9 @@ final class TicketsController extends Controller
 {
     public function store(StoreTicketRequest $request): ShowResource
     {
-        return ShowResource::make(Ticket::create($request->validated()));
+        $ticket = Ticket::query()->create($request->validated());
+
+        return ShowResource::make($ticket);
     }
 
     public function show(Ticket $ticket): ShowResource

@@ -30,11 +30,11 @@ final class Article extends Model
     use HasFactory, SoftDeletes;
 
     protected $casts = [
-        'is_published'          => 'boolean',
-        'embedding_version'     => 'integer',
-        'embedded_at'           => 'datetime',
-        'tags'                  => 'array',
-        'language'              => Language::class,
+        'is_published' => 'boolean',
+        'embedding_version' => 'integer',
+        'embedded_at' => 'datetime',
+        'tags' => 'array',
+        'language' => Language::class,
     ];
 
     protected $fillable = [

@@ -24,13 +24,18 @@ final class Message extends Model
 
     protected $casts = [
         'is_internal' => 'boolean',
-        'meta'        => 'array',
+        'meta' => 'array',
         'author_type' => MessageAuthorType::class,
 
     ];
 
     protected $fillable = [
-        'ticket_id','author_id','author_type','body','is_internal','meta',
+        'ticket_id',
+        'author_id',
+        'author_type',
+        'body',
+        'is_internal',
+        'meta',
     ];
 
     public function ticket(): BelongsTo

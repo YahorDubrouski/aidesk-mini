@@ -6,7 +6,7 @@ namespace App\Enums\Message;
 
 enum MessageAuthorType: string
 {
-    case User  = 'user';
+    case User = 'user';
     case Agent = 'agent';
-    case Ai    = 'ai';
+    case Ai = 'ai';
 }

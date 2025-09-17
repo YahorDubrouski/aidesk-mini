@@ -7,5 +7,5 @@ namespace App\Enums\Locale;
 enum Language: string
 {
     case English = 'en';
-    case German  = 'de';
+    case German = 'de';
 }

@@ -22,7 +22,7 @@ final class Feedback extends Model
     protected $table = 'feedback';
 
     protected $casts = [
-        'rating'          => 'integer',
+        'rating' => 'integer',
         'used_suggestion' => 'boolean',
     ];
 

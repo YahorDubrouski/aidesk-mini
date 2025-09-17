@@ -37,8 +37,8 @@ final class AiAnalysis extends Model
         'usage_total_tokens' => 'integer',
         'cost_usd' => 'decimal:4',
         'result' => 'array',
-        'provider'                => AiProvider::class,
-        'model'                   => AiModel::class,
+        'provider' => AiProvider::class,
+        'model' => AiModel::class,
     ];
 
     protected $fillable = [

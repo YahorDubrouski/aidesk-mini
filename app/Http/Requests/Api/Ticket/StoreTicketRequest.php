@@ -8,33 +8,19 @@ use App\Http\Requests\BaseRequest;
 
 final class StoreTicketRequest extends BaseRequest
 {
-    protected function prepareForValidation(): void
-    {
-        $email = $this->input('email');
-        $subject = $this->input('subject');
-        $body = $this->input('body');
-
-        // Just to showcase how to do some basic sanitization.
-        $this->merge([
-            'email'   => is_string($email) ? mb_strtolower(trim($email)) : $email,
-            'subject' => is_string($subject) ? trim($subject) : $subject,
-            'body'    => is_string($body) ? trim($body) : $body,
-        ]);
-    }
-
     public function rules(): array
     {
         return [
-            'email'   => ['required', 'string', 'email:rfc', 'max:254'],
+            'email' => ['required', 'string', 'email:rfc', 'max:254'],
             'subject' => ['nullable', 'string', 'max:160'],
-            'body'    => ['required', 'string', 'min:10', 'max:5000'],
+            'body' => ['required', 'string', 'min:10', 'max:5000'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'body'    => 'message body',
+            'body' => 'message body',
         ];
     }
 
@@ -49,5 +35,19 @@ final class StoreTicketRequest extends BaseRequest
         }
 
         return $data;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $email = $this->input('email');
+        $subject = $this->input('subject');
+        $body = $this->input('body');
+
+        // Just to showcase how to do some basic sanitization.
+        $this->merge([
+            'email' => is_string($email) ? mb_strtolower(trim($email)) : $email,
+            'subject' => is_string($subject) ? trim($subject) : $subject,
+            'body' => is_string($body) ? trim($body) : $body,
+        ]);
     }
 }

@@ -1,26 +1,35 @@
 #!/usr/bin/env bash
+set -e
 
-if [ "$SUPERVISOR_PHP_USER" != "root" ] && [ "$SUPERVISOR_PHP_USER" != "sail" ]; then
-    echo "You should set SUPERVISOR_PHP_USER to either 'sail' or 'root'."
-    exit 1
+# Only 'sail' or 'root' are allowed
+if [ "$SUPERVISOR_PHP_USER" != "sail" ] && [ "$SUPERVISOR_PHP_USER" != "root" ]; then
+  echo "You should set SUPERVISOR_PHP_USER to either 'sail' or 'root'."
+  exit 1
 fi
 
-if [ ! -z "$WWWUSER" ]; then
-    usermod -u $WWWUSER sail
+# Remap sail to host UID/GID (requires root)
+if [ -n "$WWWGROUP" ]; then
+  groupmod -o -g "$WWWGROUP" sail
+fi
+if [ -n "$WWWUSER" ]; then
+  usermod -o -u "$WWWUSER" sail
 fi
 
-if [ ! -d /.composer ]; then
-    mkdir /.composer
-fi
+# Composer cache under HOME, not '/.composer'
+export HOME="${HOME:-/home/sail}"
+export COMPOSER_HOME="${COMPOSER_HOME:-$HOME/.composer}"
+export COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR:-$COMPOSER_HOME/cache}"
+mkdir -p "$COMPOSER_CACHE_DIR"
+chown -R sail:"${WWWGROUP:-$WWWGROUP}" "$HOME" || true
 
-chmod -R ugo+rw /.composer
-
+# Exec
 if [ $# -gt 0 ]; then
-    if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
-        exec "$@"
-    else
-        exec gosu $WWWUSER "$@"
-    fi
+  if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
+    exec "$@"
+  else
+    # run as the *user name* we just remapped (cleaner than 'gosu 1000')
+    exec gosu sail "$@"
+  fi
 else
-    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+  exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 fi
