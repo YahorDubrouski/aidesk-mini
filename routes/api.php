@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApiKeysController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\TicketsController;
@@ -14,6 +15,12 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+});
+
+Route::prefix('api-keys')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [ApiKeysController::class, 'index']);
+    Route::post('/', [ApiKeysController::class, 'store']);
+    Route::delete('/{apiKey}', [ApiKeysController::class, 'destroy']);
 });
 
 Route::prefix('tickets')->group(function () {

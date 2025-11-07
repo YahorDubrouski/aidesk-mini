@@ -74,12 +74,9 @@ final class AuthTest extends TestCase
 
     public function test_user_can_logout(): void
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $user = $this->createAuthenticatedUser();
 
-        $response = $this->postJson('/api/auth/logout', [], [
-            'Authorization' => 'Bearer ' . $token,
-        ]);
+        $response = $this->postJson('/api/auth/logout', [], $this->withAuth($user));
 
         $response->assertStatus(200)
             ->assertJson(['message' => 'Logged out successfully']);
