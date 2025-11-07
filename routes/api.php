@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ApiKeysController;
+use App\Http\Controllers\Api\ArticlesController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\TicketsController;
@@ -26,4 +27,8 @@ Route::prefix('api-keys')->middleware('auth:sanctum')->group(function () {
 Route::prefix('tickets')->group(function () {
     Route::post('/', [TicketsController::class, 'store']);
     Route::get('/{ticket}', [TicketsController::class, 'show']);
+});
+
+Route::prefix('articles')->group(function () {
+    Route::post('/search', [ArticlesController::class, 'search']);
 });

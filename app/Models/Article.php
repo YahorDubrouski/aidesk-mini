@@ -21,6 +21,7 @@ use Illuminate\Support\Carbon;
  * @property bool $is_published
  * @property int $embedding_version
  * @property string|null $embedding_external_id
+ * @property string|null $embedding_vector
  * @property Carbon|null $embedded_at
  * @property string|null $checksum_sha256
  * @property array|null $tags
@@ -47,6 +48,7 @@ final class Article extends Model
         'is_published',
         'embedding_version',
         'embedding_external_id',
+        'embedding_vector',
         'embedded_at',
         'checksum_sha256',
         'tags',
