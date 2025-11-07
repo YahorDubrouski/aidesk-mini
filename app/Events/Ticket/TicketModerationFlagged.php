@@ -7,7 +7,7 @@ namespace App\Events\Ticket;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class TicketModerationFailed
+final class TicketModerationFlagged
 {
     use Dispatchable, SerializesModels;
 

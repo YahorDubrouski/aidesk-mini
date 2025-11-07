@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace App\Services\Ai;
 
+use App\DTOs\Ai\EmbeddingResult;
+use App\DTOs\Ai\ModerationResult;
+use App\DTOs\Ai\TextAnalysisResult;
 use App\Enums\Ai\AiModel;
 use App\Enums\Ai\AiProvider;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 final class OpenAiClient implements AiClientInterface
 {
-    public function analyzeTicket(string $body, ?string $subject = null): array
+    /**
+     * @throws ConnectionException
+     */
+    public function analyzeText(string $body, ?string $subject = null): TextAnalysisResult
     {
-        $model = config('openai.model', AiModel::Gpt4oMini->value);
+        $modelValue = config('openai.model', AiModel::Gpt4oMini->value);
 
         $payload = [
-            'model' => $model,
+            'model' => $modelValue,
             'messages' => [
                 ['role' => 'system', 'content' => 'You are a support triage assistant. Reply in compact JSON.'],
                 ['role' => 'user', 'content' => trim(($subject ? "Subject: $subject\n" : '') . "Body: $body")],
@@ -30,27 +37,19 @@ final class OpenAiClient implements AiClientInterface
 
         $json = $response['choices'][0]['message']['content'] ?? '{}';
         $data = json_decode($json, true) ?: [];
-
         $usage = $response['usage'] ?? [];
-        return [
+
+        return TextAnalysisResult::fromArray([
             'provider' => AiProvider::OpenAI->value,
-            'model' => $model,
-            'result' => [
-                'category' => $data['category'] ?? null,
-                'urgency' => $data['urgency'] ?? 'normal',
-                'sentiment' => $data['sentiment'] ?? null,
-                'summary' => $data['summary'] ?? null,
-                'reply_suggestion' => $data['reply_suggestion'] ?? null,
-            ],
-            'usage' => [
-                'prompt_tokens' => (int)($usage['prompt_tokens'] ?? 0),
-                'completion_tokens' => (int)($usage['completion_tokens'] ?? 0),
-                'total_tokens' => (int)($usage['total_tokens'] ?? 0),
-                'cost_usd' => number_format(0, 4, '.', ''),
-            ],
-        ];
+            'model' => $modelValue,
+            'result' => $data,
+            'usage' => $usage,
+        ]);
     }
 
+    /**
+     * Build HTTP client with retry logic (min 2 retries for unstable connections).
+     */
     private function buildClient(): PendingRequest
     {
         $baseUrl = rtrim((string)config('openai.base_url'), '/');
@@ -58,12 +57,29 @@ final class OpenAiClient implements AiClientInterface
         return Http::withToken((string)config('openai.api_key'))
             ->timeout((int)config('openai.timeout', 15))
             ->retry(
-                (int)config('openai.retry_times', 2),
-                (int)config('openai.retry_sleep_ms', 250)
+                $this->getRetryTimes(),
+                $this->getRetrySleepMs()
             )->baseUrl($baseUrl);
     }
 
-    public function embedText(string $text): array
+    /**
+     * Get retry attempts (minimum 2 for unstable connections).
+     */
+    private function getRetryTimes(): int
+    {
+        $configuredRetries = (int)config('openai.retry_times', 2);
+        return max(2, $configuredRetries);
+    }
+
+    private function getRetrySleepMs(): int
+    {
+        return (int)config('openai.retry_sleep_ms', 250);
+    }
+
+    /**
+     * @throws ConnectionException
+     */
+    public function embedText(string $text): EmbeddingResult
     {
         $model = (string)config('openai.embedding_model', 'text-embedding-3-small');
 
@@ -75,19 +91,20 @@ final class OpenAiClient implements AiClientInterface
             ->json();
 
         $vector = $response['data'][0]['embedding'] ?? [];
-        $usageTokens = (int)($response['usage']['total_tokens'] ?? 0);
+        $usageTokenCount = (int)($response['usage']['total_tokens'] ?? 0);
 
-        return [
+        return EmbeddingResult::fromArray([
             'model' => $model,
-            'vector' => array_map('floatval', $vector),
-            'usage' => ['tokens' => $usageTokens],
-        ];
+            'vector' => $vector,
+            'usage' => ['tokens' => $usageTokenCount],
+        ]);
     }
 
-    public function moderate(string $text): array
+    /**
+     * @throws ConnectionException
+     */
+    public function moderate(string $text): ModerationResult
     {
-        // Use text-moderation-latest
-
         $response = $this->buildClient()
             ->post('/moderations', [
                 'model' => 'omni-moderation-latest',
@@ -96,10 +113,10 @@ final class OpenAiClient implements AiClientInterface
             ->json();
 
         $result = $response['results'][0] ?? [];
-        return [
-            'flagged' => (bool)($result['flagged'] ?? false),
+        return ModerationResult::fromArray([
+            'flagged' => $result['flagged'] ?? false,
             'category' => $result['categories'] ?? null,
             'reason' => null,
-        ];
+        ]);
     }
 }
