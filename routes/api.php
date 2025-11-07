@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\TicketsController;
 use Illuminate\Support\Facades\Route;
@@ -7,6 +8,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('health')->group(function () {
     Route::get('/live', [HealthController::class, 'live']);
     Route::get('/ready', [HealthController::class, 'ready']);
+});
+
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 });
 
 Route::prefix('tickets')->group(function () {
