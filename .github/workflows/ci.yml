@@ -43,6 +43,7 @@ jobs:
       - name: Run tests in Docker container
         run: |
           docker run --rm \
+            --entrypoint="" \
             -v ${{ github.workspace }}:/var/www/html \
             -w /var/www/html \
             -e APP_ENV=testing \
@@ -80,6 +81,8 @@ jobs:
               echo '' &&
               echo '=== DEBUG: Running composer install ===' &&
               rm -rf vendor/ 2>/dev/null || true &&
+              mkdir -p vendor &&
+              chmod 777 vendor &&
               composer install --no-ansi --no-interaction --no-scripts --prefer-dist -vvv 2>&1 || (echo 'ERROR: composer install failed with exit code:' $? && exit 1) &&
               echo '' &&
               echo '=== DEBUG: Checking vendor directory ===' &&
@@ -121,6 +124,7 @@ jobs:
       - name: Run Pint in Docker container
         run: |
           docker run --rm \
+            --entrypoint="" \
             -v ${{ github.workspace }}:/var/www/html \
             -w /var/www/html \
             -e WWWGROUP=$(id -g) \
