@@ -22,6 +22,9 @@ export COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR:-$COMPOSER_HOME/cache}"
 mkdir -p "$COMPOSER_CACHE_DIR"
 chown -R sail:"${WWWGROUP:-$WWWGROUP}" "$HOME" || true
 
+# Regenerate Swagger documentation on deployment
+php /var/www/html/artisan l5-swagger:generate
+
 # Exec
 if [ $# -gt 0 ]; then
   if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
