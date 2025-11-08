@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Article;
+use App\Models\Ticket;
+use App\Observers\ArticleObserver;
+use App\Observers\TicketObserver;
 use App\Services\Ai\AiClientInterface;
 use App\Services\Ai\FakeAiClient;
 use App\Services\Ai\OpenAiClient;
@@ -38,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Ticket::observe(TicketObserver::class);
+        Article::observe(ArticleObserver::class);
     }
 }

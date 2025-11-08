@@ -19,11 +19,16 @@ final readonly class ArticleEmbeddingService
 
     public function generateForArticle(Article $article): void
     {
+        $newChecksum = $this->calculateChecksum($article);
+
+        if ($article->checksum_sha256 === $newChecksum && $article->embedding_vector !== null) {
+            return;
+        }
+
         $text = $this->buildTextForEmbedding($article);
         $vector = $this->embeddingService->generate($text);
-        $checksum = $this->calculateChecksum($article);
 
-        $this->storeEmbedding($article, $vector, $checksum);
+        $this->storeEmbedding($article, $vector, $newChecksum);
     }
 
     public function search(string $query, int $limit = 10): Collection
