@@ -43,10 +43,12 @@ jobs:
       - name: Run tests in Docker container
         run: |
           docker run --rm \
-            --user "$(id -u):$(id -g)" \
             -v ${{ github.workspace }}:/var/www/html \
             -w /var/www/html \
             -e APP_ENV=testing \
+            -e WWWGROUP=$(id -g) \
+            -e WWWUSER=$(id -u) \
+            -e COMPOSER_HOME=/tmp/.composer \
             aidesk-mini:testing \
             bash -c "
               mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
@@ -85,9 +87,11 @@ jobs:
       - name: Run Pint in Docker container
         run: |
           docker run --rm \
-            --user "$(id -u):$(id -g)" \
             -v ${{ github.workspace }}:/var/www/html \
             -w /var/www/html \
+            -e WWWGROUP=$(id -g) \
+            -e WWWUSER=$(id -u) \
+            -e COMPOSER_HOME=/tmp/.composer \
             aidesk-mini:testing \
             bash -c "
               mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
