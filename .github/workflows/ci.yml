@@ -49,6 +49,8 @@ jobs:
             -e WWWGROUP=$(id -g) \
             -e WWWUSER=$(id -u) \
             -e COMPOSER_HOME=/tmp/.composer \
+            -e DB_CONNECTION=sqlite \
+            -e DB_DATABASE=/var/www/html/database/database.sqlite \
             aidesk-mini:testing \
             bash -c "
               mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
