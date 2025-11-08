@@ -43,11 +43,14 @@ jobs:
       - name: Run tests in Docker container
         run: |
           docker run --rm \
+            --user "$(id -u):$(id -g)" \
             -v ${{ github.workspace }}:/var/www/html \
             -w /var/www/html \
             -e APP_ENV=testing \
             aidesk-mini:testing \
             bash -c "
+              mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
+              touch database/database.sqlite &&
               composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist &&
               php artisan key:generate &&
               php artisan config:clear &&
@@ -82,10 +85,12 @@ jobs:
       - name: Run Pint in Docker container
         run: |
           docker run --rm \
+            --user "$(id -u):$(id -g)" \
             -v ${{ github.workspace }}:/var/www/html \
             -w /var/www/html \
             aidesk-mini:testing \
             bash -c "
+              mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
               composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist &&
               vendor/bin/pint --test
             "
