@@ -19,6 +19,10 @@ final readonly class ArticleEmbeddingService
 
     public function generateForArticle(Article $article): void
     {
+        if (!config('features.article_ai_embeddings')) {
+            return;
+        }
+
         $newChecksum = $this->calculateChecksum($article);
 
         if ($article->checksum_sha256 === $newChecksum && $article->embedding_vector !== null) {
@@ -33,6 +37,10 @@ final readonly class ArticleEmbeddingService
 
     public function search(string $query, int $limit = 10): Collection
     {
+        if (!config('features.ai_embeddings')) {
+            return new Collection();
+        }
+
         $queryVector = $this->embeddingService->generate($query);
 
         $articles = Article::query()

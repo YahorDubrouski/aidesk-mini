@@ -23,14 +23,20 @@ final readonly class TicketAnalysisService implements TicketAnalysisServiceInter
     {
         $ticket = Ticket::query()->findOrFail($ticketId);
 
-        $textToModerate = trim(
-            ($ticket->subject ? "Subject: {$ticket->subject}\n" : '')
-            . "Body: {$ticket->body}"
-        );
+        if (config('features.ticket_ai_moderation')) {
+            $textToModerate = trim(
+                ($ticket->subject ? "Subject: {$ticket->subject}\n" : '')
+                . "Body: {$ticket->body}"
+            );
 
-        $moderation = $this->aiClient->moderate($textToModerate);
-        if ($moderation->flagged) {
-            event(new TicketModerationFlagged($ticket->id, $moderation->toArray()));
+            $moderation = $this->aiClient->moderate($textToModerate);
+            if ($moderation->flagged) {
+                event(new TicketModerationFlagged($ticket->id, $moderation->toArray()));
+                return;
+            }
+        }
+
+        if (!config('features.ticket_ai_analysis')) {
             return;
         }
 
