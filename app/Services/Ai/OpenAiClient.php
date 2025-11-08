@@ -26,7 +26,7 @@ final class OpenAiClient implements AiClientInterface
             'model' => $modelValue,
             'messages' => [
                 ['role' => 'system', 'content' => 'You are a support triage assistant. Reply in compact JSON.'],
-                ['role' => 'user', 'content' => trim(($subject ? "Subject: $subject\n" : '') . "Body: $body")],
+                ['role' => 'user', 'content' => trim(($subject ? "Subject: $subject\n" : '')."Body: $body")],
             ],
             'response_format' => ['type' => 'json_object'],
         ];
@@ -52,10 +52,10 @@ final class OpenAiClient implements AiClientInterface
      */
     private function buildClient(): PendingRequest
     {
-        $baseUrl = rtrim((string)config('openai.base_url'), '/');
+        $baseUrl = rtrim((string) config('openai.base_url'), '/');
 
-        return Http::withToken((string)config('openai.api_key'))
-            ->timeout((int)config('openai.timeout', 15))
+        return Http::withToken((string) config('openai.api_key'))
+            ->timeout((int) config('openai.timeout', 15))
             ->retry(
                 $this->getRetryTimes(),
                 $this->getRetrySleepMs()
@@ -67,13 +67,14 @@ final class OpenAiClient implements AiClientInterface
      */
     private function getRetryTimes(): int
     {
-        $configuredRetries = (int)config('openai.retry_times', 2);
+        $configuredRetries = (int) config('openai.retry_times', 2);
+
         return max(2, $configuredRetries);
     }
 
     private function getRetrySleepMs(): int
     {
-        return (int)config('openai.retry_sleep_ms', 250);
+        return (int) config('openai.retry_sleep_ms', 250);
     }
 
     /**
@@ -81,7 +82,7 @@ final class OpenAiClient implements AiClientInterface
      */
     public function embedText(string $text): EmbeddingResult
     {
-        $model = (string)config('openai.embedding_model', 'text-embedding-3-small');
+        $model = (string) config('openai.embedding_model', 'text-embedding-3-small');
 
         $response = $this->buildClient()
             ->post('/embeddings', [
@@ -91,7 +92,7 @@ final class OpenAiClient implements AiClientInterface
             ->json();
 
         $vector = $response['data'][0]['embedding'] ?? [];
-        $usageTokenCount = (int)($response['usage']['total_tokens'] ?? 0);
+        $usageTokenCount = (int) ($response['usage']['total_tokens'] ?? 0);
 
         return EmbeddingResult::fromArray([
             'model' => $model,
@@ -113,6 +114,7 @@ final class OpenAiClient implements AiClientInterface
             ->json();
 
         $result = $response['results'][0] ?? [];
+
         return ModerationResult::fromArray([
             'flagged' => $result['flagged'] ?? false,
             'category' => $result['categories'] ?? null,

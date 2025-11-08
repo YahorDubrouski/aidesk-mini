@@ -37,7 +37,7 @@ final readonly class ApiKeyService
 
         $apiKey = $apiKeys->first(fn (ApiKey $apiKey) => Hash::check($key, $apiKey->key_hash));
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             return null;
         }
 
@@ -63,12 +63,12 @@ final readonly class ApiKeyService
 
     private function generateKey(): string
     {
-        return 'ak_' . Str::random(40);
+        return 'ak_'.Str::random(40);
     }
 
     private function resetDailyUsageIfNeeded(ApiKey $apiKey): void
     {
-        if (!$apiKey->last_used_at || $apiKey->last_used_at->isToday()) {
+        if (! $apiKey->last_used_at || $apiKey->last_used_at->isToday()) {
             return;
         }
 

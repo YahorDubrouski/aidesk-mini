@@ -18,13 +18,12 @@ final class GenerateArticleEmbeddingJob implements ShouldQueue
 
     public function __construct(
         private readonly int $articleId
-    ) {
-    }
+    ) {}
 
     public function handle(ArticleEmbeddingService $articleEmbeddingService): void
     {
         $article = Article::query()->find($this->articleId);
-        if (!$article) {
+        if (! $article) {
             return;
         }
 

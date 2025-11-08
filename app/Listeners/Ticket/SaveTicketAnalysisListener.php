@@ -15,8 +15,7 @@ final class SaveTicketAnalysisListener implements ShouldQueue
 
     public function __construct(
         private readonly TicketAnalysisServiceInterface $service
-    ) {
-    }
+    ) {}
 
     public function handle(TicketAnalyzed $event): void
     {

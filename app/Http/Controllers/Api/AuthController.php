@@ -14,8 +14,7 @@ final class AuthController extends Controller
 {
     public function __construct(
         private readonly AuthService $authService
-    ) {
-    }
+    ) {}
 
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -36,7 +35,7 @@ final class AuthController extends Controller
     {
         $validated = $request->validated();
 
-        if (!$this->authService->attemptLogin($validated['email'], $validated['password'])) {
+        if (! $this->authService->attemptLogin($validated['email'], $validated['password'])) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 

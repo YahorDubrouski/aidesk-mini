@@ -14,12 +14,11 @@ final readonly class ArticleEmbeddingService
 
     public function __construct(
         private EmbeddingService $embeddingService
-    ) {
-    }
+    ) {}
 
     public function generateForArticle(Article $article): void
     {
-        if (!config('features.article_ai_embeddings')) {
+        if (! config('features.article_ai_embeddings')) {
             return;
         }
 
@@ -37,8 +36,8 @@ final readonly class ArticleEmbeddingService
 
     public function search(string $query, int $limit = 10): Collection
     {
-        if (!config('features.ai_embeddings')) {
-            return new Collection();
+        if (! config('features.article_ai_embeddings')) {
+            return new Collection;
         }
 
         $queryVector = $this->embeddingService->generate($query);
@@ -56,17 +55,21 @@ final readonly class ArticleEmbeddingService
 
         $articleIds = $results->map(fn ($result) => $result['article']->id)->all();
 
+        if (empty($articleIds)) {
+            return new Collection;
+        }
+
         return Article::query()->whereIn('id', $articleIds)->get();
     }
 
     private function buildTextForEmbedding(Article $article): string
     {
-        return trim($article->title . "\n" . $article->body);
+        return trim($article->title."\n".$article->body);
     }
 
     private function calculateChecksum(Article $article): string
     {
-        return hash('sha256', $article->title . $article->body);
+        return hash('sha256', $article->title.$article->body);
     }
 
     private function storeEmbedding(Article $article, array $vector, string $checksum): void
@@ -82,7 +85,7 @@ final readonly class ArticleEmbeddingService
     private function calculateSimilarity(Article $article, array $queryVector): ?array
     {
         $articleVector = $this->getEmbedding($article);
-        if (!$articleVector) {
+        if (! $articleVector) {
             return null;
         }
 
@@ -96,11 +99,12 @@ final readonly class ArticleEmbeddingService
 
     private function getEmbedding(Article $article): ?array
     {
-        if (!$article->embedding_vector) {
+        if (! $article->embedding_vector) {
             return null;
         }
 
         $decoded = json_decode($article->embedding_vector, true);
+
         return is_array($decoded) ? $decoded : null;
     }
 }

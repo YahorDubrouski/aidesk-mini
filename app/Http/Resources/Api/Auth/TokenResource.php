@@ -28,5 +28,4 @@ final class TokenResource extends JsonResource
             'token' => $this->token,
         ];
     }
-
 }

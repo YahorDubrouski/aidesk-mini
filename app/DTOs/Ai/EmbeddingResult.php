@@ -11,8 +11,7 @@ final readonly class EmbeddingResult
         /** @var float[] */
         public array $vector,
         public int $tokens,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
@@ -28,7 +27,7 @@ final readonly class EmbeddingResult
         return new self(
             model: $data['model'] ?? '',
             vector: array_map('floatval', $data['vector'] ?? []),
-            tokens: (int)($data['usage']['tokens'] ?? $data['tokens'] ?? 0),
+            tokens: (int) ($data['usage']['tokens'] ?? $data['tokens'] ?? 0),
         );
     }
 }

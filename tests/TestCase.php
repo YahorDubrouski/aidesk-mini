@@ -20,7 +20,7 @@ abstract class TestCase extends BaseTestCase
     protected function withAuth(User $user): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->getAuthToken($user),
+            'Authorization' => 'Bearer '.$this->getAuthToken($user),
         ];
     }
 }

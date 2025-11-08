@@ -20,18 +20,18 @@ final class ArticleFactory extends Factory
         $body = implode("\n\n", $bodyParagraphs);
 
         return [
-            'public_id'             => (string) Str::ulid(),
-            'title'                 => $title,
-            'slug'                  => Str::slug($title) . '-' . Str::lower(Str::random(6)),
-            'body'                  => $body,
-            'summary'               => $this->faker->optional()->text(160),
-            'language'              => $this->faker->randomElement(Language::cases()),
-            'is_published'          => true,
-            'embedding_version'     => 1,
+            'public_id' => (string) Str::ulid(),
+            'title' => $title,
+            'slug' => Str::slug($title).'-'.Str::lower(Str::random(6)),
+            'body' => $body,
+            'summary' => $this->faker->optional()->text(160),
+            'language' => $this->faker->randomElement(Language::cases()),
+            'is_published' => true,
+            'embedding_version' => 1,
             'embedding_external_id' => null,
-            'embedded_at'           => null,
-            'checksum_sha256'       => hash('sha256', $body),
-            'tags'                  => $this->faker->optional()->randomElements(
+            'embedded_at' => null,
+            'checksum_sha256' => hash('sha256', $body),
+            'tags' => $this->faker->optional()->randomElements(
                 ['getting-started', 'billing', 'troubleshooting', 'account', 'security', 'faq'],
                 $this->faker->numberBetween(0, 3)
             ),

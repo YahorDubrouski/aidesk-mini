@@ -26,7 +26,7 @@ final class ArticleObserver
 
     public function updated(Article $article): void
     {
-        if (!$article->is_published) {
+        if (! $article->is_published) {
             return;
         }
 

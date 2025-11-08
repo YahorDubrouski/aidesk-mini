@@ -14,8 +14,7 @@ final readonly class TextAnalysisResult
         public AiModel $model,
         public TextAnalysisData $result,
         public UsageData $usage,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

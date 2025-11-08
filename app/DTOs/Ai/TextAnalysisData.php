@@ -12,8 +12,7 @@ final readonly class TextAnalysisData
         public ?string $sentiment,
         public ?string $summary,
         public ?string $replySuggestion,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

@@ -15,9 +15,7 @@ use App\Services\Ai\AiClientInterface;
 
 final readonly class TicketAnalysisService implements TicketAnalysisServiceInterface
 {
-    public function __construct(private AiClientInterface $aiClient)
-    {
-    }
+    public function __construct(private AiClientInterface $aiClient) {}
 
     public function analyze(int $ticketId): void
     {
@@ -26,17 +24,18 @@ final readonly class TicketAnalysisService implements TicketAnalysisServiceInter
         if (config('features.ticket_ai_moderation')) {
             $textToModerate = trim(
                 ($ticket->subject ? "Subject: {$ticket->subject}\n" : '')
-                . "Body: {$ticket->body}"
+                ."Body: {$ticket->body}"
             );
 
             $moderation = $this->aiClient->moderate($textToModerate);
             if ($moderation->flagged) {
                 event(new TicketModerationFlagged($ticket->id, $moderation->toArray()));
+
                 return;
             }
         }
 
-        if (!config('features.ticket_ai_analysis')) {
+        if (! config('features.ticket_ai_analysis')) {
             return;
         }
 
@@ -47,7 +46,7 @@ final readonly class TicketAnalysisService implements TicketAnalysisServiceInter
     public function saveAnalysisAndUpdateTicket(int $ticketId, TextAnalysisResult $analysis): void
     {
         $ticket = Ticket::query()->find($ticketId);
-        if (!$ticket) {
+        if (! $ticket) {
             return;
         }
 

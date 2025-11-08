@@ -18,11 +18,11 @@ final class ApiKeyFactory extends Factory
         $hash = hash('sha256', $randomMaterial);
 
         return [
-            'user_id'      => User::factory(),
-            'name'         => $this->faker->words(2, true),
-            'key_hash'     => $hash,
-            'daily_quota'  => 100,
-            'daily_usage'  => 0,
+            'user_id' => User::factory(),
+            'name' => $this->faker->words(2, true),
+            'key_hash' => $hash,
+            'daily_quota' => 100,
+            'daily_usage' => 0,
             'last_used_at' => null,
         ];
     }

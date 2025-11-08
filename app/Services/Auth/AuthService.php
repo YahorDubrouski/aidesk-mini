@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 final readonly class AuthService
 {
     private const TOKEN_NAME = 'auth-token';
+
     private const DEFAULT_USER_ACTIVE = true;
 
     public function register(string $name, string $email, string $password): User

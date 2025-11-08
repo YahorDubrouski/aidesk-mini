@@ -10,8 +10,7 @@ final readonly class ModerationResult
         public bool $flagged,
         public ?array $category = null,
         public ?string $reason = null,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
@@ -25,7 +24,7 @@ final readonly class ModerationResult
     public static function fromArray(array $data): self
     {
         return new self(
-            flagged: (bool)($data['flagged'] ?? false),
+            flagged: (bool) ($data['flagged'] ?? false),
             category: $data['category'] ?? null,
             reason: $data['reason'] ?? null,
         );

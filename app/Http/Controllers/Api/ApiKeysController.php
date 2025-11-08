@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\ApiKey\StoreApiKeyRequest;
-use App\Http\Resources\Api\ApiKey\ShowResource;
 use App\Http\Resources\Api\ApiKey\ListResource;
+use App\Http\Resources\Api\ApiKey\ShowResource;
 use App\Models\ApiKey;
 use App\Services\ApiKey\ApiKeyService;
 use Illuminate\Http\JsonResponse;
@@ -16,8 +16,7 @@ final class ApiKeysController extends Controller
 {
     public function __construct(
         private readonly ApiKeyService $apiKeyService
-    ) {
-    }
+    ) {}
 
     public function index(): ListResource
     {

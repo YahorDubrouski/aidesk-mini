@@ -15,9 +15,9 @@ final class FeedbackFactory extends Factory
     public function definition(): array
     {
         return [
-            'ticket_id'       => Ticket::factory(),
-            'rating'          => $this->faker->numberBetween(1, 5),
-            'comment'         => $this->faker->optional()->sentence(12),
+            'ticket_id' => Ticket::factory(),
+            'rating' => $this->faker->numberBetween(1, 5),
+            'comment' => $this->faker->optional()->sentence(12),
             'used_suggestion' => $this->faker->boolean(60),
         ];
     }

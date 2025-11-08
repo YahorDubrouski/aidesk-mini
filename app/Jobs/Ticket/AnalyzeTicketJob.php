@@ -16,9 +16,7 @@ final class AnalyzeTicketJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public int $ticketId)
-    {
-    }
+    public function __construct(public int $ticketId) {}
 
     /**
      * @throws ConnectionException

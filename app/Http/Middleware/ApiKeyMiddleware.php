@@ -13,20 +13,19 @@ final class ApiKeyMiddleware
 {
     public function __construct(
         private readonly ApiKeyService $apiKeyService
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request, Closure $next): Response
     {
         $keyHeader = $request->header('X-API-Key');
 
-        if (!$keyHeader) {
+        if (! $keyHeader) {
             return response()->json(['message' => 'API key required'], 401);
         }
 
         $apiKey = $this->apiKeyService->validate($keyHeader);
 
-        if (!$apiKey) {
+        if (! $apiKey) {
             return response()->json(['message' => 'Invalid API key or quota exceeded'], 401);
         }
 

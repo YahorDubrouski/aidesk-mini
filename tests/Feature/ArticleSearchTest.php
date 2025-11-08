@@ -59,7 +59,7 @@ final class ArticleSearchTest extends TestCase
         Article::factory()->create([
             'title' => 'Test Article',
             'body' => 'Test body',
-            'is_published' => true,
+            'is_published' => false,
         ]);
 
         $response = $this->postJson('/api/articles/search', [
@@ -98,6 +98,11 @@ final class ArticleSearchTest extends TestCase
         $articleEmbeddingService->generateForArticle($passwordArticle);
         $articleEmbeddingService->generateForArticle($apiArticle);
         $articleEmbeddingService->generateForArticle($ticketArticle);
+
+        // Refresh articles to ensure embeddings are loaded
+        $passwordArticle->refresh();
+        $apiArticle->refresh();
+        $ticketArticle->refresh();
 
         $response = $this->postJson('/api/articles/search', [
             'query' => 'I cannot access my account because I lost my login credentials',

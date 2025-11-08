@@ -19,12 +19,12 @@ final class MessageFactory extends Factory
         $authorType = $this->faker->randomElement(MessageAuthorType::cases());
 
         return [
-            'ticket_id'   => Ticket::factory(),
+            'ticket_id' => Ticket::factory(),
             'author_type' => $authorType,
-            'author_id'   => $authorType === MessageAuthorType::Ai ? null : User::factory(),
-            'body'        => $this->faker->paragraph(),
+            'author_id' => $authorType === MessageAuthorType::Ai ? null : User::factory(),
+            'body' => $this->faker->paragraph(),
             'is_internal' => false,
-            'meta'        => null,
+            'meta' => null,
         ];
     }
 

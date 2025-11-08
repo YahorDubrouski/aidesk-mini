@@ -15,6 +15,5 @@ final class TicketModerationFlagged
         public int $ticketId,
         /** @var array{flagged:bool, category?:mixed, reason?:?string} */
         public array $moderation
-    ) {
-    }
+    ) {}
 }

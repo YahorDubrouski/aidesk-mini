@@ -15,6 +15,5 @@ final class TicketAnalyzed
     public function __construct(
         public int $ticketId,
         public TextAnalysisResult $analysis
-    ) {
-    }
+    ) {}
 }

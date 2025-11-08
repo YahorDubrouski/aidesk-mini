@@ -11,8 +11,7 @@ final readonly class UsageData
         public int $completionTokens,
         public int $totalTokens,
         public string $costUsd,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {
@@ -27,9 +26,9 @@ final readonly class UsageData
     public static function fromArray(array $data): self
     {
         return new self(
-            promptTokens: (int)($data['prompt_tokens'] ?? 0),
-            completionTokens: (int)($data['completion_tokens'] ?? 0),
-            totalTokens: (int)($data['total_tokens'] ?? 0),
+            promptTokens: (int) ($data['prompt_tokens'] ?? 0),
+            completionTokens: (int) ($data['completion_tokens'] ?? 0),
+            totalTokens: (int) ($data['total_tokens'] ?? 0),
             costUsd: $data['cost_usd'] ?? '0.0000',
         );
     }

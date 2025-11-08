@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(AiClientInterface::class, function () {
             if (
-                !config('openai.enabled')
+                ! config('openai.enabled')
                 || config('openai.fake')
                 || app()->environment('testing')
             ) {

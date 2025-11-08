@@ -12,14 +12,13 @@ final class ArticlesController extends Controller
 {
     public function __construct(
         private readonly ArticleEmbeddingService $articleEmbeddingService
-    ) {
-    }
+    ) {}
 
     public function search(SearchArticleRequest $request): ListResource
     {
         $validated = $request->validated();
 
-        $limit = (int)($validated['limit'] ?? 10);
+        $limit = (int) ($validated['limit'] ?? 10);
         $articles = $this->articleEmbeddingService->search($validated['query'], $limit);
 
         return new ListResource($articles);
