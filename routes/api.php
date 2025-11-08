@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\ApiKeysController;
-use App\Http\Controllers\Api\ArticlesController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\HealthController;
-use App\Http\Controllers\Api\TicketsController;
+use App\Http\Controllers\Api\ApiKey\ApiKeysController;
+use App\Http\Controllers\Api\Article\ArticlesController;
+use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Health\HealthController;
+use App\Http\Controllers\Api\Ticket\TicketsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('health')->group(function () {

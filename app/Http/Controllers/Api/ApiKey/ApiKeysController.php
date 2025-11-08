@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\ApiKey;
 
-use App\Http\Requests\ApiKey\StoreApiKeyRequest;
+use App\Http\Controllers\Api\Controller;
+use App\Http\Requests\Api\ApiKey\StoreApiKeyRequest;
 use App\Http\Resources\Api\ApiKey\ListResource;
 use App\Http\Resources\Api\ApiKey\ShowResource;
 use App\Models\ApiKey;

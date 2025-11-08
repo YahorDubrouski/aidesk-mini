@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Ticket;
 
+use App\Http\Controllers\Api\Controller;
 use App\Http\Requests\Api\Ticket\StoreTicketRequest;
 use App\Http\Resources\Api\Ticket\ShowResource;
 use App\Models\Ticket;

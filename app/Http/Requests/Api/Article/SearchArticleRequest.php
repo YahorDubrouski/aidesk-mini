@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Article;
+namespace App\Http\Requests\Api\Article;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-final class SearchArticleRequest extends FormRequest
+final class SearchArticleRequest extends BaseRequest
 {
     public function authorize(): bool
     {

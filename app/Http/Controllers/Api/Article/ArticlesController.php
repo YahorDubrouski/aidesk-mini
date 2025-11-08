@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Article;
 
-use App\Http\Requests\Article\SearchArticleRequest;
+use App\Http\Controllers\Api\Controller;
+use App\Http\Requests\Api\Article\SearchArticleRequest;
 use App\Http\Resources\Api\Article\ListResource;
 use App\Services\Embedding\ArticleEmbeddingService;
 use OpenApi\Attributes as OA;

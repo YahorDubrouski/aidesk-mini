@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\ApiKey;
+namespace App\Http\Requests\Api\ApiKey;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-final class StoreApiKeyRequest extends FormRequest
+final class StoreApiKeyRequest extends BaseRequest
 {
     public function authorize(): bool
     {

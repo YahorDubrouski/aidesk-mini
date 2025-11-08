@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+declare(strict_types=1);
 
+namespace App\Http\Controllers\Api\Health;
+
+use App\Http\Controllers\Api\Controller;
 use App\Services\AppHealth\HealthCheckService;
 use Illuminate\Http\JsonResponse;
 
-class HealthController extends Controller
+final class HealthController extends Controller
 {
     public function live(): JsonResponse
     {

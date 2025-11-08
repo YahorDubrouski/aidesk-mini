@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Api\ApiKey;
 
+use App\Http\Resources\BaseShowResource;
 use App\Models\ApiKey;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-final class ShowResource extends JsonResource
+final class ShowResource extends BaseShowResource
 {
     public function __construct(
         ApiKey $apiKey,
