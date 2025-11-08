@@ -54,10 +54,38 @@ jobs:
             aidesk-mini:testing \
             bash -c "
               set -e &&
-              mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
+              echo '=== DEBUG: Starting setup ===' &&
+              echo 'Current user: $(whoami)' &&
+              echo 'Current directory: $(pwd)' &&
+              echo 'WWWUSER: $WWWUSER' &&
+              echo 'WWWGROUP: $WWWGROUP' &&
+              echo '' &&
+              echo '=== DEBUG: Creating directories ===' &&
+              mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache vendor &&
+              echo 'Directories created' &&
               touch database/database.sqlite &&
-              composer install --no-ansi --no-interaction --no-scripts --prefer-dist || exit 1 &&
-              [ -f vendor/autoload.php ] || (echo 'ERROR: vendor/autoload.php not found after composer install' && exit 1) &&
+              echo 'Database file created' &&
+              echo '' &&
+              echo '=== DEBUG: Setting permissions ===' &&
+              chmod -R 777 storage bootstrap/cache database vendor 2>/dev/null || true &&
+              ls -la | head -20 &&
+              echo '' &&
+              echo '=== DEBUG: Checking composer ===' &&
+              which composer &&
+              composer --version &&
+              echo '' &&
+              echo '=== DEBUG: Checking composer.json ===' &&
+              [ -f composer.json ] && echo 'composer.json exists' || echo 'ERROR: composer.json not found' &&
+              [ -f composer.lock ] && echo 'composer.lock exists' || echo 'WARNING: composer.lock not found' &&
+              echo '' &&
+              echo '=== DEBUG: Running composer install ===' &&
+              composer install --no-ansi --no-interaction --no-scripts --prefer-dist &&
+              echo '' &&
+              echo '=== DEBUG: Checking vendor directory ===' &&
+              ls -la vendor/ | head -10 || echo 'ERROR: vendor directory does not exist' &&
+              [ -f vendor/autoload.php ] && echo 'SUCCESS: vendor/autoload.php exists' || (echo 'ERROR: vendor/autoload.php not found after composer install' && ls -la vendor/ 2>&1 && exit 1) &&
+              echo '' &&
+              echo '=== DEBUG: Running artisan commands ===' &&
               php artisan key:generate &&
               php artisan config:clear &&
               php artisan migrate --force &&
