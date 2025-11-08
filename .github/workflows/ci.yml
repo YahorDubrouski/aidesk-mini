@@ -54,9 +54,10 @@ jobs:
             aidesk-mini:testing \
             bash -c "
               set -e &&
-              mkdir -p data{cache,sbase storage/framework/essions,views} bootstrap/cache &&
+              mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
               touch database/database.sqlite &&
-              composer install --no-ansi --no-interaction --no-scripts --prefer-dist &&
+              composer install --no-ansi --no-interaction --no-scripts --prefer-dist || exit 1 &&
+              [ -f vendor/autoload.php ] || (echo 'ERROR: vendor/autoload.php not found after composer install' && exit 1) &&
               php artisan key:generate &&
               php artisan config:clear &&
               php artisan migrate --force &&
