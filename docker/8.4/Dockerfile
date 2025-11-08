@@ -63,9 +63,15 @@ RUN userdel -r ubuntu
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
-COPY start-container /usr/local/bin/start-container
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY php.ini /etc/php/8.4/cli/conf.d/99-sail.ini
+# Copy composer files and install dependencies (for production builds)
+# Note: In development with volumes, composer install runs at runtime
+COPY composer.json ./
+COPY composer.lock* ./
+RUN composer install --no-dev --no-ansi --no-interaction --no-scripts --optimize-autoloader
+
+COPY docker/8.4/start-container /usr/local/bin/start-container
+COPY docker/8.4/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/8.4/php.ini /etc/php/8.4/cli/conf.d/99-sail.ini
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 80/tcp

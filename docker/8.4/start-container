@@ -22,6 +22,24 @@ export COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR:-$COMPOSER_HOME/cache}"
 mkdir -p "$COMPOSER_CACHE_DIR"
 chown -R sail:"${WWWGROUP:-$WWWGROUP}" "$HOME" || true
 
+# Ensure necessary directories exist
+mkdir -p /var/www/html/database \
+         /var/www/html/storage/framework/{cache,sessions,views} \
+         /var/www/html/bootstrap/cache
+
+# Generate app key if it doesn't exist (for development)
+if [ ! -f /var/www/html/.env ] || ! grep -q "^APP_KEY=" /var/www/html/.env; then
+  php /var/www/html/artisan key:generate
+fi
+
+# Clear config cache
+php /var/www/html/artisan config:clear
+
+# Run migrations (skip in testing environment)
+if [ "${APP_ENV:-production}" != "testing" ]; then
+  php /var/www/html/artisan migrate --force
+fi
+
 # Regenerate Swagger documentation on deployment
 php /var/www/html/artisan l5-swagger:generate
 

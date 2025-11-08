@@ -24,7 +24,7 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./docker/8.4
+          context: .
           file: ./docker/8.4/Dockerfile
           push: false
           load: true
@@ -53,7 +53,6 @@ jobs:
             -e DB_DATABASE=/var/www/html/database/database.sqlite \
             aidesk-mini:testing \
             bash -c "
-              mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
               touch database/database.sqlite &&
               composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist &&
               php artisan key:generate &&
@@ -76,7 +75,7 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./docker/8.4
+          context: .
           file: ./docker/8.4/Dockerfile
           push: false
           load: true
@@ -96,7 +95,6 @@ jobs:
             -e COMPOSER_HOME=/tmp/.composer \
             aidesk-mini:testing \
             bash -c "
-              mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache &&
               composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist &&
               vendor/bin/pint --test
             "
