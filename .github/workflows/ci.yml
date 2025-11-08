@@ -55,42 +55,10 @@ jobs:
             aidesk-mini:testing \
             bash -c "
               set -e &&
-              echo '=== DEBUG: Starting setup ===' &&
-              echo 'Current user: $(whoami)' &&
-              echo 'Current directory: $(pwd)' &&
-              echo 'WWWUSER: $WWWUSER' &&
-              echo 'WWWGROUP: $WWWGROUP' &&
-              echo '' &&
-              echo '=== DEBUG: Creating directories ===' &&
               mkdir -p database storage/framework/{cache,sessions,views} bootstrap/cache vendor &&
-              echo 'Directories created' &&
               touch database/database.sqlite &&
-              echo 'Database file created' &&
-              echo '' &&
-              echo '=== DEBUG: Setting permissions ===' &&
-              chmod -R 777 storage bootstrap/cache database vendor 2>/dev/null || true &&
-              ls -la | head -20 &&
-              echo '' &&
-              echo '=== DEBUG: Checking composer ===' &&
-              which composer &&
-              composer --version &&
-              echo '' &&
-              echo '=== DEBUG: Checking composer.json ===' &&
-              [ -f composer.json ] && echo 'composer.json exists' || echo 'ERROR: composer.json not found' &&
-              [ -f composer.lock ] && echo 'composer.lock exists' || echo 'WARNING: composer.lock not found' &&
-              echo '' &&
-              echo '=== DEBUG: Running composer install ===' &&
-              rm -rf vendor/ 2>/dev/null || true &&
-              mkdir -p vendor &&
-              chmod 777 vendor &&
-              composer install --no-ansi --no-interaction --no-scripts --prefer-dist -vvv 2>&1 || (echo 'ERROR: composer install failed with exit code:' $? && exit 1) &&
-              echo '' &&
-              echo '=== DEBUG: Checking vendor directory ===' &&
-              echo 'Vendor directory exists:' && [ -d vendor ] && echo 'YES' || echo 'NO' &&
-              echo 'Vendor directory contents:' && ls -la vendor/ 2>&1 | head -20 || echo 'ERROR: Cannot list vendor directory' &&
-              echo 'Checking for autoload.php:' && [ -f vendor/autoload.php ] && echo 'SUCCESS: vendor/autoload.php exists' || (echo 'ERROR: vendor/autoload.php not found' && echo 'Full vendor listing:' && ls -laR vendor/ 2>&1 | head -50 && exit 1) &&
-              echo '' &&
-              echo '=== DEBUG: Running artisan commands ===' &&
+              chmod -R 777 storage bootstrap/cache database vendor &&
+              composer install --no-ansi --no-interaction --no-scripts --prefer-dist &&
               php artisan key:generate &&
               php artisan config:clear &&
               php artisan migrate --force &&
