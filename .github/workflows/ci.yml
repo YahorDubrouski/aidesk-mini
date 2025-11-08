@@ -79,6 +79,7 @@ jobs:
               [ -f composer.lock ] && echo 'composer.lock exists' || echo 'WARNING: composer.lock not found' &&
               echo '' &&
               echo '=== DEBUG: Running composer install ===' &&
+              rm -rf vendor/ 2>/dev/null || true &&
               composer install --no-ansi --no-interaction --no-scripts --prefer-dist -vvv 2>&1 || (echo 'ERROR: composer install failed with exit code:' $? && exit 1) &&
               echo '' &&
               echo '=== DEBUG: Checking vendor directory ===' &&
