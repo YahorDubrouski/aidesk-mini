@@ -4,6 +4,19 @@ Simple guide to building smart search that understands meaning, not just keyword
 
 ---
 
+## 📋 Prerequisites
+
+Before diving in, you should be familiar with:
+
+- **PHP** - Basic syntax, arrays, functions, classes
+- **Laravel** - MVC pattern, Eloquent ORM, migrations, service layer
+- **REST APIs** - HTTP methods, JSON requests/responses, API endpoints
+- **Database** - SQL basics, migrations, JSON storage
+
+**Don't worry if you're new to AI/ML** - This guide explains everything step by step! 🎓
+
+---
+
 ## 🎯 The Problem
 
 **Traditional Search:**
