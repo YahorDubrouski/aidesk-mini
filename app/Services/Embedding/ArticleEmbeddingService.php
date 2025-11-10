@@ -34,32 +34,44 @@ final readonly class ArticleEmbeddingService
         $this->storeEmbedding($article, $vector, $newChecksum);
     }
 
+    /**
+     * Search articles using semantic similarity.
+     * 
+     * Converts the search query to an embedding vector, then compares it
+     * with all article embeddings to find the most semantically similar articles.
+     * 
+     * @param string $query Search query text
+     * @param int $limit Maximum number of results to return
+     * @return Collection Articles sorted by similarity (most similar first)
+     */
     public function search(string $query, int $limit = 10): Collection
     {
         if (! config('features.article_ai_embeddings')) {
             return new Collection;
         }
 
+        // Step 1: Convert search query to numbers (embedding)
         $queryVector = $this->embeddingService->generate($query);
 
+        // Step 2: Get all published articles that have embeddings
         $articles = Article::query()
             ->where('is_published', true)
             ->whereNotNull('embedded_at')
             ->get();
 
+        // Step 3: Compare query numbers with each article's numbers
+        // Calculate how similar they are (0.0 = different, 1.0 = identical)
         $results = $articles->map(fn (Article $article) => $this->calculateSimilarity($article, $queryVector))
-            ->filter()
-            ->sortByDesc('similarity')
-            ->take($limit)
+            ->filter() // Remove articles without embeddings
+            ->sortByDesc('similarity') // Best matches first (highest similarity score)
+            ->take($limit) // Get top N results
             ->values();
 
-        $articleIds = $results->map(fn ($result) => $result['article']->id)->all();
+        // Step 4: Return articles in order of similarity
+        // Preserve order by mapping results directly instead of using whereIn
+        $articleModels = $results->map(fn ($result) => $result['article'])->all();
 
-        if (empty($articleIds)) {
-            return new Collection;
-        }
-
-        return Article::query()->whereIn('id', $articleIds)->get();
+        return new Collection($articleModels);
     }
 
     private function buildTextForEmbedding(Article $article): string
