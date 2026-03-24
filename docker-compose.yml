@@ -139,6 +139,24 @@ services:
             - sail
         restart: unless-stopped
 
+    # Option A: HTTPS in front of Sail (mkcert files in docker/certs/). Enable with: docker compose --profile https up -d
+    caddy:
+        image: caddy:2-alpine
+        profiles:
+            - https
+        ports:
+            - '${SAIL_HTTPS_PORT:-443}:443'
+        environment:
+            SAIL_HTTPS_DOMAIN: '${SAIL_HTTPS_DOMAIN:-aidesk-mini.loc}'
+        volumes:
+            - './docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro'
+            - './docker/certs:/etc/certs:ro'
+        networks:
+            - sail
+        depends_on:
+            laravel.test:
+                condition: service_healthy
+
 networks:
     sail:
         driver: bridge
