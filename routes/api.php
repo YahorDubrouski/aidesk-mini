@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\ApiKey\ApiKeysController;
 use App\Http\Controllers\Api\Article\ArticlesController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Checkout\CheckoutController;
 use App\Http\Controllers\Api\Health\HealthController;
+use App\Http\Controllers\Api\Stripe\StripeWebhookController;
 use App\Http\Controllers\Api\Ticket\TicketsController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,3 +34,9 @@ Route::prefix('tickets')->group(function () {
 Route::prefix('articles')->group(function () {
     Route::post('/search', [ArticlesController::class, 'search']);
 });
+
+Route::prefix('checkout')->middleware('auth:sanctum')->group(function () {
+    Route::post('/premium', [CheckoutController::class, 'createPremiumSession']);
+});
+
+Route::post('/stripe/webhook', StripeWebhookController::class);

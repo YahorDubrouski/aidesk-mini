@@ -1,4 +1,4 @@
-# 🚀 AIDesk Mini - AI-Powered Ticket Triage & Knowledge Base
+# 🚀 AIDesk Mini - AI-Powered Ticket Triage
 
 <div align="center">
 
@@ -38,7 +38,7 @@
 
 - **AI-Powered Intelligence**: Automated ticket analysis, sentiment detection, and semantic search
 - **Scalable Architecture**: Domain-driven design, service layer pattern, event-driven architecture
-- **Enterprise Features**: API key management, rate limiting, health monitoring, feature toggles
+- **Enterprise Features**: API key management, rate limiting, health monitoring, feature toggles, Stripe Premium checkout
 - **DevOps Excellence**: Docker containerization, CI/CD pipelines, automated testing
 - **Code Quality**: Clean code principles, comprehensive testing, automated code style checks
 
@@ -62,6 +62,12 @@ This project serves as a comprehensive demonstration of backend development expe
 - **API Key Management**: Full CRUD operations for API keys with daily quota tracking
 - **Rate Limiting**: Built-in quota management and usage tracking
 - **Request Correlation**: Unique correlation IDs for request tracing across services
+
+### 💳 Payments (Stripe)
+
+- **Stripe Checkout (Premium)**: Hosted Checkout Sessions (server-side `price_...`), web form redirect and `POST /api/checkout/premium` (Sanctum) for a JSON checkout URL, success/cancel return routes, paid orders in `orders`
+- **Webhooks**: Signed `checkout.session.completed` handler for reliable fulfillment (optional in local dev without `STRIPE_WEBHOOK_SECRET` when using the success redirect)
+- **More detail**: [Stripe integration — flow, screenshots, routes, service layer](documentation/payment/stripe/README.md)
 
 ### 📊 Queue & Background Processing
 

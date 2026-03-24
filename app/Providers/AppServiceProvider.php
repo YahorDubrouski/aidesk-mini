@@ -13,6 +13,8 @@ use App\Services\Ai\FakeAiClient;
 use App\Services\Ai\OpenAiClient;
 use App\Services\Ticket\TicketAnalysisService;
 use App\Services\Ticket\TicketAnalysisServiceInterface;
+use Illuminate\Http\Middleware\TrustProxies;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,5 +46,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Ticket::observe(TicketObserver::class);
         Article::observe(ArticleObserver::class);
+
+        $proxies = config('trustedproxy.proxies');
+        TrustProxies::at(($proxies === '' || $proxies === null) ? '*' : $proxies);
+
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
     }
 }
