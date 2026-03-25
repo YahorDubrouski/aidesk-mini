@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Checkout;
 
 use App\Http\Controllers\Api\Controller;
+use App\Http\Requests\Api\Checkout\CreatePremiumCheckoutSessionRequest;
+use App\Http\Requests\Api\Checkout\ShowCheckoutSuccessRequest;
 use App\Models\User;
 use App\Services\Payment\PremiumStripeCheckoutService;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use OpenApi\Attributes as OA;
@@ -18,7 +20,8 @@ final class CheckoutController extends Controller
 {
     public function __construct(
         private readonly PremiumStripeCheckoutService $premiumStripeCheckout
-    ) {}
+    ) {
+    }
 
     /**
      * Create a Premium Checkout Session. Returns JSON with checkout_url, or redirects if redirect=1.
@@ -68,9 +71,13 @@ final class CheckoutController extends Controller
             ),
         ]
     )]
-    public function createPremiumSession(Request $request): JsonResponse|RedirectResponse
+    public function createPremiumSession(CreatePremiumCheckoutSessionRequest $request): JsonResponse|RedirectResponse
     {
         $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
         $urls = $this->premiumStripeReturnUrls();
 
         $checkoutUrl = $this->premiumStripeCheckout->createCheckoutSession(
@@ -89,7 +96,7 @@ final class CheckoutController extends Controller
     /**
      * Web session: create Premium Checkout Session and redirect the browser to Stripe Checkout.
      */
-    public function redirectToPremiumCheckout(Request $request): RedirectResponse
+    public function redirectToPremiumCheckout(FormRequest $request): RedirectResponse
     {
         /** @var User $user */
         $user = $request->user();
@@ -108,11 +115,11 @@ final class CheckoutController extends Controller
     /**
      * Success page after payment (Stripe redirects here with ?session_id=cs_xxx).
      */
-    public function showCheckoutSuccess(Request $request): View
+    public function showCheckoutSuccess(ShowCheckoutSuccessRequest $request): View
     {
         $order = null;
-        $sessionId = $request->query('session_id');
-        if ($sessionId) {
+        $sessionId = $request->validated('session_id');
+        if (is_string($sessionId) && $sessionId !== '') {
             $order = $this->premiumStripeCheckout->fulfillOrderFromCheckoutSession($sessionId);
         }
 
@@ -133,7 +140,7 @@ final class CheckoutController extends Controller
     private function premiumStripeReturnUrls(): array
     {
         return [
-            'success' => url()->route('checkout.success').'?session_id={CHECKOUT_SESSION_ID}',
+            'success' => url()->route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel' => url()->route('checkout.cancel'),
         ];
     }
