@@ -1,0 +1,333 @@
+/* --------------------------------------------------------------------------
+   Design tokens (light + dark)
+   -------------------------------------------------------------------------- */
+:root {
+    --checkout-bg: #FDFDFC;
+    --checkout-fg: #1b1b18;
+    --checkout-muted: #706f6c;
+    --checkout-border: #e3e3e0;
+    --checkout-card: #ffffff;
+    --checkout-accent: #f53003;
+    --checkout-accent-hover: #d42800;
+    --checkout-error: #b91c1c;
+    --checkout-success: #15803d;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --checkout-bg: #0a0a0a;
+        --checkout-fg: #EDEDEC;
+        --checkout-muted: #A1A09A;
+        --checkout-border: #3E3E3A;
+        --checkout-card: #161615;
+        --checkout-accent: #FF4433;
+        --checkout-accent-hover: #ff6b5c;
+        --checkout-error: #f87171;
+        --checkout-success: #4ade80;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Page shell + centered column (logo, card, links share width)
+   -------------------------------------------------------------------------- */
+.checkout-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: var(--checkout-bg);
+    color: var(--checkout-fg);
+    font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+.checkout-column {
+    width: 100%;
+    max-width: 26rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.checkout-column--wide {
+    max-width: 34rem;
+}
+
+/* --------------------------------------------------------------------------
+   Brand / logo lockup (above card)
+   -------------------------------------------------------------------------- */
+.checkout-brand-row {
+    margin-bottom: 1.35rem;
+}
+
+.checkout-brand-lockup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.checkout-logo-mark {
+    display: block;
+    width: 100%;
+    max-width: 18rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: transparent;
+}
+
+.checkout-logo-mark img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 5.5rem;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.checkout-brand-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--checkout-muted);
+    margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Forms: fields, labels, errors, inline links row
+   -------------------------------------------------------------------------- */
+.checkout-field {
+    margin-bottom: 1rem;
+}
+
+.checkout-field:last-of-type {
+    margin-bottom: 0;
+}
+
+.checkout-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--checkout-muted);
+    margin-bottom: 0.4rem;
+}
+
+.checkout-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--checkout-border);
+    background: var(--checkout-bg);
+    color: var(--checkout-fg);
+    font-size: 0.875rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.checkout-input:focus {
+    outline: none;
+    border-color: var(--checkout-accent);
+    box-shadow: 0 0 0 3px rgba(245, 48, 3, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+    .checkout-input:focus {
+        box-shadow: 0 0 0 3px rgba(255, 68, 51, 0.2);
+    }
+}
+
+.checkout-error {
+    font-size: 0.8125rem;
+    color: var(--checkout-error);
+    margin-top: 0.35rem;
+}
+
+.checkout-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 0.8125rem;
+}
+
+.checkout-inline a {
+    color: var(--checkout-accent);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.checkout-inline a:hover {
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Card + typography inside card
+   -------------------------------------------------------------------------- */
+.checkout-card {
+    width: 100%;
+    max-width: 100%;
+    background: var(--checkout-card);
+    border-radius: 0.75rem;
+    padding: 1.75rem 1.75rem 1.5rem;
+    box-shadow: inset 0 0 0 1px rgba(26, 26, 0, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+    .checkout-card {
+        box-shadow: inset 0 0 0 1px rgba(255, 250, 237, 0.18);
+    }
+}
+
+.checkout-card h1 {
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.5rem;
+    color: var(--checkout-fg);
+}
+
+.checkout-lead {
+    margin: 0 0 1.25rem;
+    font-size: 0.875rem;
+    color: var(--checkout-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Primary actions (submit)
+   -------------------------------------------------------------------------- */
+.checkout-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--checkout-fg);
+    color: var(--checkout-card);
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.checkout-btn:hover:not(:disabled) {
+    opacity: 0.92;
+}
+
+.checkout-btn:active:not(:disabled) {
+    transform: scale(0.99);
+}
+
+.checkout-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media (prefers-color-scheme: dark) {
+    .checkout-btn {
+        background: #eeeeec;
+        color: #1C1C1A;
+    }
+
+    .checkout-btn:hover:not(:disabled) {
+        background: #fff;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Inline validation / status line
+   -------------------------------------------------------------------------- */
+.checkout-msg {
+    margin-top: 0.85rem;
+    font-size: 0.8125rem;
+    color: var(--checkout-error);
+    min-height: 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   In-card footer (e.g. extra links under form)
+   -------------------------------------------------------------------------- */
+.checkout-footer {
+    margin-top: 1.35rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--checkout-border);
+    font-size: 0.8125rem;
+}
+
+.checkout-footer a {
+    color: var(--checkout-accent);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.checkout-footer a:hover {
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Links row below card
+   -------------------------------------------------------------------------- */
+.checkout-links {
+    max-width: 100%;
+    width: 100%;
+    margin-top: 0.25rem;
+    text-align: center;
+    font-size: 0.8125rem;
+}
+
+.checkout-links a {
+    color: var(--checkout-accent);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.checkout-links a:hover {
+    text-decoration: underline;
+}
+
+.checkout-links span {
+    color: var(--checkout-muted);
+    margin: 0 0.35rem;
+}
+
+/* --------------------------------------------------------------------------
+   Success / pending states (checkout result views)
+   -------------------------------------------------------------------------- */
+.checkout-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.checkout-icon--success {
+    background: rgba(21, 128, 61, 0.12);
+    color: var(--checkout-success);
+}
+
+.checkout-icon--warn {
+    background: rgba(245, 48, 3, 0.1);
+    color: var(--checkout-accent);
+}
+
+.checkout-status {
+    font-size: 0.9375rem;
+    margin: 0 0 0.75rem;
+    color: var(--checkout-fg);
+}
+
+.checkout-status strong {
+    color: var(--checkout-success);
+}
