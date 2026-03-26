@@ -135,6 +135,11 @@ body.landing-page {
     font-weight: 500;
 }
 
+.landing-nav form {
+    display: inline;
+    margin: 0;
+}
+
 .landing-nav a {
     color: var(--lp-accent);
     text-decoration: none;

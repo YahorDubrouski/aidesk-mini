@@ -7,9 +7,7 @@
     <title>@yield('title', config('app.name'))</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/css/landing.css', 'resources/js/app.js'])
-    @endif
+    @vite(['resources/css/app.css', 'resources/css/landing.css', 'resources/js/app.js'])
     @stack('head')
 </head>
 <body class="landing-page">
@@ -27,7 +25,7 @@
                 <nav class="landing-nav" aria-label="Account">
                     @auth
                         <a href="{{ route('checkout.upgrade', [], false) }}">Premium checkout</a>
-                        <form method="post" action="{{ route('web.logout', [], false) }}" style="display:inline;">
+                        <form method="post" action="{{ route('web.logout', [], false) }}">
                             @csrf
                             <button type="submit">Sign out</button>
                         </form>
