@@ -169,6 +169,66 @@
 }
 
 /* --------------------------------------------------------------------------
+   Upgrade page (guest CTA, sign-out, API hint)
+   -------------------------------------------------------------------------- */
+.checkout-msg--spaced-bottom {
+    margin-bottom: 1rem;
+}
+
+.checkout-lead--tight-bottom {
+    margin-bottom: 1rem;
+}
+
+.checkout-form--reset {
+    margin: 0;
+}
+
+.checkout-btn--bare {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--checkout-muted);
+    font: inherit;
+    cursor: pointer;
+    font-size: 0.8125rem;
+}
+
+.checkout-btn--bare:hover {
+    color: var(--checkout-fg);
+    text-decoration: underline;
+}
+
+.checkout-inline--guest-cta {
+    margin-top: 0;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.checkout-inline--guest-cta .checkout-btn {
+    width: auto;
+    margin-top: 0;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.checkout-account-link {
+    align-self: center;
+    font-size: 0.875rem;
+}
+
+.checkout-lead--api-hint {
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+    font-size: 0.75rem;
+}
+
+.checkout-lead--api-hint code {
+    font-size: 0.7rem;
+}
+
+/* --------------------------------------------------------------------------
    Card + typography inside card
    -------------------------------------------------------------------------- */
 .checkout-card {
