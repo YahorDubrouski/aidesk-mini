@@ -1,0 +1,11 @@
+# TLS terminates here; upstream is Laravel Sail (laravel.test:80).
+# Domain comes from env SAIL_HTTPS_DOMAIN (see docker-compose).
+
+{$SAIL_HTTPS_DOMAIN:aidesk-mini.loc} {
+	tls /etc/certs/cert.pem /etc/certs/key.pem
+
+	reverse_proxy laravel.test:80 {
+		header_up X-Forwarded-Proto https
+		header_up X-Forwarded-Host {host}
+	}
+}
