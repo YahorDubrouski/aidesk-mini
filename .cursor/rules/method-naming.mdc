@@ -1,0 +1,129 @@
+# `.cursor/rules/method-naming.mdc`
+
+```md
+---
+description: Enforce clear method naming rules
+globs:
+  - "**/*.js"
+  - "**/*.ts"
+  - "**/*.php"
+alwaysApply: true
+---
+
+# Method Naming Rules
+
+When creating or refactoring methods/functions, follow these rules.
+
+## 1. Method names must start with an action verb
+
+Prefer action-based names:
+
+```js
+function findUserById(id) {}
+function createInvoice(order) {}
+function sendVerificationEmail(email) {}
+function calculateCustomerDiscount(customer) {}
+function validateOrder(order) {}
+```
+
+Avoid noun-only names:
+
+```js
+function user(id) {}
+function invoice(order) {}
+function discount(customer) {}
+```
+
+## 2. Avoid vague words
+
+Do not use vague method names unless required by framework convention.
+
+Avoid:
+
+```js
+function process(data) {}
+function handle(data) {}
+function resolve(data) {}
+```
+
+Prefer explicit business actions:
+
+```js
+function createInvoice(order) {}
+function sendVerificationEmail(email) {}
+function calculateCustomerDiscount(customer) {}
+```
+
+Allowed exceptions:
+
+```php
+public function handle(): void
+```
+
+Allowed only for framework conventions like Laravel Jobs, Commands, Listeners, middleware, or handlers where the framework requires the method name.
+
+## 3. Method names must reveal side effects
+
+If a method changes data, saves data, sends something, logs something, dispatches a job, or calls an external service, the name must reflect that.
+
+Avoid:
+
+```js
+function getUser(id) {
+    const user = findUserOrFail(id);
+
+    user.lastSeenAt = new Date();
+    saveUser(user);
+
+    return user;
+}
+```
+
+Prefer:
+
+```js
+function findUserAndUpdateLastSeen(id) {}
+```
+
+Even better:
+
+```js
+const user = findUser(id);
+
+markUserAsSeen(user);
+```
+
+## 4. If the method is hard to name, split it
+
+Avoid methods that do many unrelated actions:
+
+```js
+function processOrder(order) {
+    validateOrder(order);
+    chargeCustomer(order);
+    createInvoice(order);
+    sendOrderConfirmation(order);
+    syncOrderWithSalesforce(order);
+}
+```
+
+Prefer small methods with one clear action:
+
+```js
+function validateOrder(order) {}
+function chargeCustomer(order) {}
+function createInvoice(order) {}
+function sendOrderConfirmation(order) {}
+function syncOrderWithSalesforce(order) {}
+```
+
+## Review checklist
+
+Before suggesting or accepting a method name, check:
+
+- Does the name start with a clear action verb?
+- Does the name avoid vague words like `process`, `handle`, `resolve`, `manage`, `execute`, `run`?
+- Does the name reveal side effects?
+- Does the method do only one clear thing?
+- Would a developer understand the method without reading its body?
+```
