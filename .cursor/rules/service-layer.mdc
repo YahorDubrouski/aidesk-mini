@@ -1,0 +1,46 @@
+---
+description: Entry adapters stay thin — business logic lives in services
+globs:
+  - app/Http/Controllers/**/*.php
+  - app/Jobs/**/*.php
+  - app/Models/**/*.php
+  - app/Http/Resources/**/*.php
+alwaysApply: false
+---
+
+# Service layer
+
+Classes at the edges of the system are **thin adapters**. They must not own business rules. Domain rules, orchestration, and side effects belong in `app/Services/**` (or dedicated action classes invoked from services).
+
+## Typical adapters
+
+| Layer | Role |
+|-------|------|
+| **HTTP controller / route handler** | Validate, authorize, call service, return response |
+| **Job / worker / queue consumer** | Resolve deps, call one service method, retries/logging only |
+| **Persistence model / entity** | Relations, casting, simple data filters — no domain workflows |
+| **API resource / serializer / DTO mapper** | Shape output; formatting only — no calculations or remote calls |
+
+## Allowed in adapters
+
+- Inject and call services
+- Framework glue (validation, auth, status codes, dispatch)
+- Mapping fields for presentation
+
+## Not allowed in adapters
+
+- External API / vendor calls
+- Status transitions, eligibility, workflow rules
+- Aggregations and domain math
+- Multi-step orchestration
+- Persistence hooks that encode business rules
+
+## Shape
+
+`receive input → call service → return / persist / enqueue`
+
+## Review checklist
+
+- [ ] Any `if` that encodes a business rule? → move to service
+- [ ] Any external client call? → move to service
+- [ ] Any calculation beyond presentation formatting? → move to service

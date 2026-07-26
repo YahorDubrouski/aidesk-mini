@@ -1,0 +1,33 @@
+---
+description: Run package managers, tests, lint, and CLI tools inside Docker — never on the host
+alwaysApply: true
+---
+
+# Docker-in-container workflow
+
+All project tooling (package install, tests, lint, format, framework CLI) runs **inside containers**, not on the host.
+
+## Pattern
+
+1. Ensure the stack is up: `docker compose ps -q laravel.test`
+2. Run commands via `docker compose exec laravel.test <command>`
+3. Prefer documented `docker compose exec` forms from README when available.
+
+```bash
+docker compose exec laravel.test php artisan test
+docker compose exec laravel.test composer install
+docker compose exec laravel.test npm install
+docker compose exec laravel.test vendor/bin/pint
+```
+
+## Forbidden on the host
+
+- `php artisan …`
+- `composer …`
+- `phpunit` / `./vendor/bin/phpunit`
+- `vendor/bin/pint`
+- bare `npm test` / project tooling that depends on container PHP or DB
+
+## Rationale
+
+Runtime (PHP version, extensions, DB, queue) is defined by the container. Host invocations fail, or worse, silently use the wrong toolchain.

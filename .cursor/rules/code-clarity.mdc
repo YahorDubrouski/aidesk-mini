@@ -1,0 +1,14 @@
+---
+description: Readers first — rename over comment, one abstraction level
+alwaysApply: true
+---
+
+# Code clarity
+
+- If a name needs a comment to understand → **rename**.
+- Comments explain **why** (constraints, quirks, trade-offs). Opaque mechanics → see `human-comments.mdc`.
+- Do **not** narrate obvious lines (`// set x to 1`).
+- **One abstraction level per function**: if you can name a block with a phrase, extract a well-named private method.
+- Entry/adapter layers: status codes and error shapes should be obvious from the method that sends them.
+
+**Before finishing:** avoid abbreviations except industry-standard (`id`, `url`, `http`). Comments only where clarity would otherwise be lost.

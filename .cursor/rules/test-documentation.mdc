@@ -1,0 +1,43 @@
+---
+description: AAA structure + business-facing Given/When/Then test docs
+globs: "**/{**/__tests__/**,**/test*/**,**/*.{test,spec}.*}"
+alwaysApply: false
+---
+
+# Test documentation
+
+## Arrange / Act / Assert
+
+Every test has `// Arrange`, `// Act`, `// Assert` in that order.
+(Setup for expected throws / rejects goes before Act.)
+
+## Business rules as documentation
+
+- **File/class docblock** (when useful): bullet list of rules under test.
+- **Test docblock**: `Given` / `When` / `Then`.
+  - Given = preconditions and input data only (no actions)
+  - When = one business action
+  - Then = expected business outcome in plain language
+- **Test name**: business rule, not implementation. Prefer `when_<condition>_then_<outcome>`.
+- **Assertion messages** (when non-obvious): business outcome, not only the technical check.
+
+```text
+/**
+ * Given
+ * - Team size is small and budget is cost-optimized.
+ * When
+ * - Recommendations are evaluated.
+ * Then
+ * - Compute recommendation is EC2.
+ */
+it('when team is small and cost-optimized then recommend EC2', ...)
+```
+
+```text
+# ❌ BAD — name describes internals
+it('calls evaluateAll and checks compute.recommended', ...)
+```
+
+## Minimal coverage
+
+Per feature: **1 positive + 2–3 negatives** (idempotency, alternate branch, error) unless the project asks for more.

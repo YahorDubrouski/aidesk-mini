@@ -1,0 +1,61 @@
+---
+description: When logic is opaque, add plain-language comments (what + how + example)
+alwaysApply: true
+---
+
+# Human comments for opaque logic
+
+Prefer a clear name first. When the **steps themselves** stay hard to read (even with a good name), add a short comment.
+
+## When a comment is required
+
+Add a comment if a non-author would struggle without opening docs:
+
+- Regular expressions
+- Bitwise / packed flags / encoding tricks
+- Non-obvious algorithms (retry backoff, pagination math, parsers)
+- Workarounds for APIs, browsers, or libraries
+- Magic numbers or formats that look arbitrary
+- Multi-step transforms where intermediate values are cryptic
+
+**Do not** comment obvious code (`i++`, simple assignments, clear `if` conditions).
+
+## Where to put it
+
+1. **Above the hard lines** (regex, formula, workaround) — preferred for local opacity
+2. **Above the function** — when the whole function’s approach needs a plain overview
+
+## Style (plain human language)
+
+Write so a non-technical reader can follow **what** happens and **how**, in everyday words.
+
+- Short: 1–3 sentences
+- Include **at least one concrete example** of input → output (or before → after)
+- No jargon unless necessary; if you must use a term, explain it once
+- Prefer “we look for…”, “this means…”, “so that…”
+- Do not restate the identifier (`// fetchCompletionContent fetches completion content`)
+
+## Examples
+
+```text
+# Find "Name (category)" phrases so we can list recommendations.
+# Example: "We choose ECS (compute)." → match "ECS" + category "compute".
+```
+
+```text
+# Wait longer after each failed try so a busy remote service can recover.
+# Example: attempt 0 → wait 250ms; attempt 1 → wait 500ms; attempt 2 → wait 1000ms.
+delayMs = 250 * 2 ** attempt
+```
+
+```text
+# ❌ Noise — the code is already clear
+# Increment the counter
+attempt += 1
+```
+
+## Decision check before finishing
+
+1. Could a better name remove the need for this comment? If yes, rename.
+2. If the mechanics are still opaque, is there a plain-language note on **what**, **how**, and **one input → output example**?
+3. Would a teammate new to the file understand the hard part without asking you?
