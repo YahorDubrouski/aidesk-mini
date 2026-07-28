@@ -9,6 +9,7 @@ use App\DTOs\Ai\ModerationResult;
 use App\DTOs\Ai\TextAnalysisResult;
 use App\Enums\Ai\AiModel;
 use App\Enums\Ai\AiProvider;
+use App\Exceptions\MissingOpenAiApiKeyException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
@@ -49,12 +50,20 @@ final class OpenAiClient implements AiClientInterface
 
     /**
      * Build HTTP client with retry logic (min 2 retries for unstable connections).
+     *
+     * @throws MissingOpenAiApiKeyException
      */
     private function buildClient(): PendingRequest
     {
+        $apiKey = trim((string) config('openai.api_key'));
+
+        if ($apiKey === '') {
+            throw new MissingOpenAiApiKeyException;
+        }
+
         $baseUrl = rtrim((string) config('openai.base_url'), '/');
 
-        return Http::withToken((string) config('openai.api_key'))
+        return Http::withToken($apiKey)
             ->timeout((int) config('openai.timeout', 15))
             ->retry(
                 $this->getRetryTimes(),

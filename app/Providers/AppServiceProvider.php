@@ -11,6 +11,9 @@ use App\Observers\TicketObserver;
 use App\Services\Ai\AiClientInterface;
 use App\Services\Ai\FakeAiClient;
 use App\Services\Ai\OpenAiClient;
+use App\Services\Ticket\FakeSuggestedReplyGenerator;
+use App\Services\Ticket\OpenAiSuggestedReplyGenerator;
+use App\Services\Ticket\SuggestedReplyGeneratorInterface;
 use App\Services\Ticket\TicketAnalysisService;
 use App\Services\Ticket\TicketAnalysisServiceInterface;
 use Illuminate\Http\Middleware\TrustProxies;
@@ -25,15 +28,19 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AiClientInterface::class, function () {
-            if (
-                ! config('openai.enabled')
-                || config('openai.fake')
-                || app()->environment('testing')
-            ) {
-                return app()->make(FakeAiClient::class);
+            if (config('openai.fake')) {
+                return $this->app->make(FakeAiClient::class);
             }
 
-            return app()->make(OpenAiClient::class);
+            return $this->app->make(OpenAiClient::class);
+        });
+
+        $this->app->bind(SuggestedReplyGeneratorInterface::class, function () {
+            if (config('openai.fake')) {
+                return $this->app->make(FakeSuggestedReplyGenerator::class);
+            }
+
+            return $this->app->make(OpenAiSuggestedReplyGenerator::class);
         });
 
         $this->app->bind(TicketAnalysisServiceInterface::class, TicketAnalysisService::class);

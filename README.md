@@ -483,7 +483,8 @@ cp .env.example .env
 3. **Configure environment variables**
 ```bash
 # Edit .env file with your settings
-# Required: OPENAI_API_KEY (or set OPENAI_FAKE=true for testing)
+# Required when OPENAI_FAKE=false and calling OpenAI: OPENAI_API_KEY
+# For local/CI without a key: OPENAI_FAKE=true
 ```
 
 4. **Start Docker containers**
