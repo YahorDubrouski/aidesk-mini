@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Ai;
 
 use App\DTOs\Ai\EmbeddingResult;
+use App\DTOs\Ai\JsonCompletionResult;
 use App\DTOs\Ai\ModerationResult;
 use App\DTOs\Ai\TextAnalysisData;
 use App\DTOs\Ai\TextAnalysisResult;
@@ -40,6 +41,23 @@ final class FakeAiClient implements AiClientInterface
                 totalTokens: 90,
                 costUsd: '0.0000',
             ),
+        );
+    }
+
+    public function completeJson(string $systemPrompt, string $userPrompt): JsonCompletionResult
+    {
+        $decoded = [
+            'answer' => '',
+            'sources' => [],
+            'refused' => true,
+            'refuse_reason' => 'insufficient_context',
+        ];
+
+        return new JsonCompletionResult(
+            decoded: $decoded,
+            rawContent: json_encode($decoded, JSON_THROW_ON_ERROR),
+            usage: new UsageData(1, 1, 2, '0.0000'),
+            model: AiModel::Gpt4oMini,
         );
     }
 

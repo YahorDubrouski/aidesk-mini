@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Ticket;
+namespace App\Services\Ticket\SuggestedReply;
 
 use App\DTOs\Ai\UsageData;
-use App\DTOs\Ticket\SuggestedReplyResult;
-use App\DTOs\Ticket\SuggestedReplySource;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplyPassage;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplyResult;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplySource;
 use App\Enums\Ai\AiModel;
 use App\Enums\Ai\AiProvider;
 
@@ -29,6 +30,9 @@ final class FakeSuggestedReplyGenerator implements SuggestedReplyGeneratorInterf
         'where', 'when', 'why', 'how', 'my', 'me', 'our', 'your',
     ];
 
+    /**
+     * @param  list<SuggestedReplyPassage>  $passages
+     */
     public function generate(string $question, array $passages): SuggestedReplyResult
     {
         if ($passages === []) {
@@ -46,14 +50,14 @@ final class FakeSuggestedReplyGenerator implements SuggestedReplyGeneratorInterf
         }
 
         $best = $matchedPassages[0];
-        $snippet = mb_substr(trim((string) $best['body']), 0, 200);
-        $answer = sprintf('Based on "%s": %s', $best['title'], $snippet);
+        $snippet = mb_substr(trim($best->body), 0, 200);
+        $answer = sprintf('Based on "%s": %s', $best->title, $snippet);
 
         $sources = array_map(
-            static fn (array $passage): SuggestedReplySource => new SuggestedReplySource(
-                id: (int) $passage['id'],
-                title: (string) $passage['title'],
-                similarity: isset($passage['similarity']) ? (float) $passage['similarity'] : null,
+            static fn (SuggestedReplyPassage $passage): SuggestedReplySource => new SuggestedReplySource(
+                id: $passage->id,
+                title: $passage->title,
+                similarity: $passage->similarity,
             ),
             $matchedPassages,
         );
@@ -79,8 +83,8 @@ final class FakeSuggestedReplyGenerator implements SuggestedReplyGeneratorInterf
      * Example: question "reset password" + passages [Password reset, Billing FAQ]
      * → only "Password reset" (words reset + password hit).
      *
-     * @param  list<array{id: int, title: string, body: string, similarity?: float|null}>  $passages
-     * @return list<array{id: int, title: string, body: string, similarity?: float|null}>
+     * @param  list<SuggestedReplyPassage>  $passages
+     * @return list<SuggestedReplyPassage>
      */
     private function matchPassagesByWords(string $question, array $passages): array
     {
@@ -92,7 +96,7 @@ final class FakeSuggestedReplyGenerator implements SuggestedReplyGeneratorInterf
 
         $scored = [];
         foreach ($passages as $passage) {
-            $haystack = strtolower(trim($passage['title'].' '.$passage['body']));
+            $haystack = strtolower(trim($passage->title.' '.$passage->body));
             $score = 0;
             foreach ($questionWords as $word) {
                 if (str_contains($haystack, $word)) {
@@ -110,7 +114,10 @@ final class FakeSuggestedReplyGenerator implements SuggestedReplyGeneratorInterf
             static fn (array $left, array $right): int => $right['score'] <=> $left['score'],
         );
 
-        return array_map(static fn (array $item): array => $item['passage'], $scored);
+        return array_map(
+            static fn (array $item): SuggestedReplyPassage => $item['passage'],
+            $scored,
+        );
     }
 
     /**

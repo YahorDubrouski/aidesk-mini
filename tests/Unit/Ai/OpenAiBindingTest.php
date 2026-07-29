@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Tests\Unit\Ai;
 
 use App\Exceptions\MissingOpenAiApiKeyException;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplyPassage;
 use App\Services\Ai\AiClientInterface;
 use App\Services\Ai\FakeAiClient;
 use App\Services\Ai\OpenAiClient;
-use App\Services\Ticket\FakeSuggestedReplyGenerator;
-use App\Services\Ticket\OpenAiSuggestedReplyGenerator;
-use App\Services\Ticket\SuggestedReplyGeneratorInterface;
+use App\Services\Ticket\SuggestedReply\FakeSuggestedReplyGenerator;
+use App\Services\Ticket\SuggestedReply\OpenAiSuggestedReplyGenerator;
+use App\Services\Ticket\SuggestedReply\SuggestedReplyGeneratorInterface;
 use Tests\TestCase;
 
 /**
@@ -139,11 +140,11 @@ final class OpenAiBindingTest extends TestCase
 
         // Act
         $generator->generate('How do I reset my password?', [
-            [
-                'id' => 12,
-                'title' => 'Password reset',
-                'body' => 'Open Settings → Security → Reset password.',
-            ],
+            new SuggestedReplyPassage(
+                id: 12,
+                title: 'Password reset',
+                body: 'Open Settings → Security → Reset password.',
+            ),
         ]);
     }
 }

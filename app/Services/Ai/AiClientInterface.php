@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Ai;
 
 use App\DTOs\Ai\EmbeddingResult;
+use App\DTOs\Ai\JsonCompletionResult;
 use App\DTOs\Ai\ModerationResult;
 use App\DTOs\Ai\TextAnalysisResult;
 use Illuminate\Http\Client\ConnectionException;
@@ -18,6 +19,13 @@ interface AiClientInterface
      * Analyze text and return structured analysis data.
      */
     public function analyzeText(string $body, ?string $subject = null): TextAnalysisResult;
+
+    /**
+     * Chat completion that must return JSON object content.
+     *
+     * @throws ConnectionException
+     */
+    public function completeJson(string $systemPrompt, string $userPrompt): JsonCompletionResult;
 
     /**
      * Return an embedding vector for semantic tasks.

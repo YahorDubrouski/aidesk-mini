@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Ticket;
+namespace Tests\Unit\Ticket\SuggestedReply;
 
 use App\DTOs\Ai\UsageData;
-use App\DTOs\Ticket\SuggestedReplyResult;
-use App\DTOs\Ticket\SuggestedReplySource;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplyResult;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplySource;
 use App\Enums\Ai\AiModel;
 use App\Enums\Ai\AiProvider;
 use PHPUnit\Framework\TestCase;

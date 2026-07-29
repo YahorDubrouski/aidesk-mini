@@ -401,6 +401,7 @@ DELETE /api/api-keys/{id} → Revoke key
 // Runtime feature control
 config('features.ticket_ai_analysis') // Enable/disable AI
 config('features.article_ai_embeddings') // Toggle embeddings
+config('features.ticket_ai_suggested_reply') // Grounded suggested replies (RAG)
 ```
 
 ### 5. **Event-Driven Processing**

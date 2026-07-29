@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DTOs\Ticket;
+namespace App\DTOs\Ticket\SuggestedReply;
 
 final readonly class SuggestedReplySource
 {

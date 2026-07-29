@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Ticket;
+namespace Tests\Unit\Ticket\SuggestedReply;
 
-use App\DTOs\Ticket\SuggestedReplyResult;
-use App\Services\Ticket\FakeSuggestedReplyGenerator;
-use App\Services\Ticket\SuggestedReplyGeneratorInterface;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplyPassage;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplyResult;
+use App\Services\Ticket\SuggestedReply\FakeSuggestedReplyGenerator;
+use App\Services\Ticket\SuggestedReply\SuggestedReplyGeneratorInterface;
 use Tests\TestCase;
 
 /**
@@ -70,18 +71,18 @@ final class SuggestedReplyGeneratorTest extends TestCase
         // Arrange
         $generator = $this->app->make(SuggestedReplyGeneratorInterface::class);
         $passages = [
-            [
-                'id' => 12,
-                'title' => 'Password reset',
-                'body' => 'Open Settings → Security → Reset password. Link expires in 24 hours.',
-                'similarity' => 0.91,
-            ],
-            [
-                'id' => 15,
-                'title' => 'Billing FAQ',
-                'body' => 'Invoices are emailed on the first of each month.',
-                'similarity' => 0.72,
-            ],
+            new SuggestedReplyPassage(
+                id: 12,
+                title: 'Password reset',
+                body: 'Open Settings → Security → Reset password. Link expires in 24 hours.',
+                similarity: 0.91,
+            ),
+            new SuggestedReplyPassage(
+                id: 15,
+                title: 'Billing FAQ',
+                body: 'Invoices are emailed on the first of each month.',
+                similarity: 0.72,
+            ),
         ];
 
         // Act
@@ -109,16 +110,16 @@ final class SuggestedReplyGeneratorTest extends TestCase
         // Arrange
         $generator = $this->app->make(SuggestedReplyGeneratorInterface::class);
         $passages = [
-            [
-                'id' => 20,
-                'title' => 'Password tips',
-                'body' => 'Never share your password with anyone.',
-            ],
-            [
-                'id' => 12,
-                'title' => 'Password reset',
-                'body' => 'Open Settings → Security → Reset password.',
-            ],
+            new SuggestedReplyPassage(
+                id: 20,
+                title: 'Password tips',
+                body: 'Never share your password with anyone.',
+            ),
+            new SuggestedReplyPassage(
+                id: 12,
+                title: 'Password reset',
+                body: 'Open Settings → Security → Reset password.',
+            ),
         ];
 
         // Act
@@ -144,11 +145,11 @@ final class SuggestedReplyGeneratorTest extends TestCase
         // Arrange
         $generator = $this->app->make(SuggestedReplyGeneratorInterface::class);
         $passages = [
-            [
-                'id' => 15,
-                'title' => 'Billing FAQ',
-                'body' => 'Invoices are emailed on the first of each month.',
-            ],
+            new SuggestedReplyPassage(
+                id: 15,
+                title: 'Billing FAQ',
+                body: 'Invoices are emailed on the first of each month.',
+            ),
         ];
 
         // Act
@@ -173,11 +174,11 @@ final class SuggestedReplyGeneratorTest extends TestCase
         // Arrange
         $generator = $this->app->make(SuggestedReplyGeneratorInterface::class);
         $passages = [
-            [
-                'id' => 12,
-                'title' => 'Password reset',
-                'body' => 'Open Settings → Security → Reset password.',
-            ],
+            new SuggestedReplyPassage(
+                id: 12,
+                title: 'Password reset',
+                body: 'Open Settings → Security → Reset password.',
+            ),
         ];
 
         // Act
@@ -205,11 +206,11 @@ final class SuggestedReplyGeneratorTest extends TestCase
         // Arrange
         $generator = $this->app->make(SuggestedReplyGeneratorInterface::class);
         $passages = [
-            [
-                'id' => 12,
-                'title' => 'Password reset',
-                'body' => 'Open Settings → Security → Reset password.',
-            ],
+            new SuggestedReplyPassage(
+                id: 12,
+                title: 'Password reset',
+                body: 'Open Settings → Security → Reset password.',
+            ),
         ];
 
         // Act

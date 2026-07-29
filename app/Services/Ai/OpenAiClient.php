@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Services\Ai;
 
 use App\DTOs\Ai\EmbeddingResult;
+use App\DTOs\Ai\JsonCompletionResult;
 use App\DTOs\Ai\ModerationResult;
 use App\DTOs\Ai\TextAnalysisResult;
+use App\DTOs\Ai\UsageData;
 use App\Enums\Ai\AiModel;
 use App\Enums\Ai\AiProvider;
 use App\Exceptions\MissingOpenAiApiKeyException;
@@ -49,6 +51,36 @@ final class OpenAiClient implements AiClientInterface
     }
 
     /**
+     * @throws ConnectionException
+     * @throws MissingOpenAiApiKeyException
+     */
+    public function completeJson(string $systemPrompt, string $userPrompt): JsonCompletionResult
+    {
+        $model = $this->configuredModel();
+
+        $response = $this->buildClient()
+            ->post('/chat/completions', [
+                'model' => $model->value,
+                'messages' => [
+                    ['role' => 'system', 'content' => $systemPrompt],
+                    ['role' => 'user', 'content' => $userPrompt],
+                ],
+                'response_format' => ['type' => 'json_object'],
+            ])
+            ->json();
+
+        $rawContent = $response['choices'][0]['message']['content'] ?? null;
+        $decoded = is_string($rawContent) ? json_decode($rawContent, true) : null;
+
+        return new JsonCompletionResult(
+            decoded: is_array($decoded) ? $decoded : null,
+            rawContent: is_string($rawContent) ? $rawContent : null,
+            usage: UsageData::fromArray($response['usage'] ?? []),
+            model: $model,
+        );
+    }
+
+    /**
      * Build HTTP client with retry logic (min 2 retries for unstable connections).
      *
      * @throws MissingOpenAiApiKeyException
@@ -84,6 +116,13 @@ final class OpenAiClient implements AiClientInterface
     private function getRetrySleepMs(): int
     {
         return (int) config('openai.retry_sleep_ms', 250);
+    }
+
+    private function configuredModel(): AiModel
+    {
+        $modelValue = (string) config('openai.model', AiModel::Gpt4oMini->value);
+
+        return AiModel::tryFrom($modelValue) ?? AiModel::Gpt4oMini;
     }
 
     /**
