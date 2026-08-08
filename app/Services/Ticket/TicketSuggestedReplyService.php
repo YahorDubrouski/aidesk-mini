@@ -7,8 +7,10 @@ namespace App\Services\Ticket;
 use App\DTOs\Article\ArticleSimilarityMatch;
 use App\DTOs\Ticket\SuggestedReply\SuggestedReplyPassage;
 use App\DTOs\Ticket\SuggestedReply\SuggestedReplyResult;
+use App\DTOs\Ticket\SuggestedReply\SuggestedReplySource;
 use App\Exceptions\SuggestedReplyFeatureDisabledException;
 use App\Models\Ticket;
+use App\Models\TicketSuggestedReply;
 use App\Services\Embedding\ArticleEmbeddingService;
 use App\Services\Ticket\SuggestedReply\SuggestedReplyGeneratorInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -19,6 +21,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 final readonly class TicketSuggestedReplyService
 {
     public const DEFAULT_PASSAGE_LIMIT = 5;
+
+    public const SCHEMA_VERSION = 1;
 
     public function __construct(
         private ArticleEmbeddingService $articleEmbeddingService,
@@ -48,7 +52,31 @@ final readonly class TicketSuggestedReplyService
             $matches,
         );
 
-        return $this->suggestedReplyGenerator->generate($question, $passages);
+        $result = $this->suggestedReplyGenerator->generate($question, $passages);
+        $this->persist($ticket->id, $result);
+
+        return $result;
+    }
+
+    private function persist(int $ticketId, SuggestedReplyResult $result): void
+    {
+        TicketSuggestedReply::query()->create([
+            'ticket_id' => $ticketId,
+            'provider' => $result->provider,
+            'model' => $result->model,
+            'schema_version' => self::SCHEMA_VERSION,
+            'answer' => $result->answer,
+            'refused' => $result->refused,
+            'refuse_reason' => $result->refuseReason,
+            'sources' => array_map(
+                static fn (SuggestedReplySource $source): array => $source->toArray(),
+                $result->sources,
+            ),
+            'usage_prompt_tokens' => $result->usage->promptTokens,
+            'usage_completion_tokens' => $result->usage->completionTokens,
+            'usage_total_tokens' => $result->usage->totalTokens,
+            'cost_usd' => $result->usage->costUsd,
+        ]);
     }
 
     private function buildQuestion(Ticket $ticket): string

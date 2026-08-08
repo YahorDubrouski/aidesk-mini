@@ -53,6 +53,7 @@ This project serves as a comprehensive demonstration of backend development expe
 - **Intelligent Ticket Analysis**: Automatic categorization, sentiment detection, and urgency assessment
 - **Content Moderation**: AI-powered content filtering and safety checks
 - **Semantic Search**: Vector-based embeddings for intelligent article search using cosine similarity
+- **Suggested Reply (RAG)**: Ticket → retrieve knowledge passages → grounded answer with citations (or refuse); see [Suggested Reply docs](documentation/ticket/suggested-reply.md)
 - **Multi-Provider Support**: Flexible AI client architecture supporting OpenAI and test implementations
 - **Retry Logic**: Intelligent retry mechanisms with exponential backoff for unstable connections
 
@@ -386,7 +387,17 @@ POST /api/articles/search
 // → Returns most relevant articles
 ```
 
-### 3. **API Key Management**
+### 3. **Suggested Reply (RAG)**
+```php
+// Grounded support reply from retrieved articles (not the same as search)
+POST /api/tickets/{public_id}/suggested-reply
+{ "limit": 5 }
+// → Retrieve top-k passages → answer only from them → answer + sources[]
+// → Or refuse when KB is empty / irrelevant
+// More detail: documentation/ticket/suggested-reply.md
+```
+
+### 4. **API Key Management**
 ```php
 // Full lifecycle management
 POST /api/api-keys → Generate new key
@@ -396,7 +407,7 @@ DELETE /api/api-keys/{id} → Revoke key
 // → Usage monitoring
 ```
 
-### 4. **Feature Toggles**
+### 5. **Feature Toggles**
 ```php
 // Runtime feature control
 config('features.ticket_ai_analysis') // Enable/disable AI
@@ -404,7 +415,7 @@ config('features.article_ai_embeddings') // Toggle embeddings
 config('features.ticket_ai_suggested_reply') // Grounded suggested replies (RAG)
 ```
 
-### 5. **Event-Driven Processing**
+### 6. **Event-Driven Processing**
 ```php
 // Automatic embedding generation
 Article::create(['title' => '...', 'is_published' => true]);
@@ -413,7 +424,7 @@ Article::create(['title' => '...', 'is_published' => true]);
 // → Embedding stored with checksum validation
 ```
 
-### 6. **Request Correlation & Logging**
+### 7. **Request Correlation & Logging**
 ```php
 // Automatic correlation ID generation
 X-Correlation-ID: uuid-here
@@ -450,10 +461,11 @@ http://localhost/api/documentation
 
 #### Tickets
 - `POST /api/tickets` - Create new ticket (triggers AI analysis)
-- `GET /api/tickets/{id}` - Get ticket details
+- `GET /api/tickets/{ticket}` - Get ticket details (`public_id`)
+- `POST /api/tickets/{ticket}/suggested-reply` - Grounded suggested reply (RAG); see [docs](documentation/ticket/suggested-reply.md)
 
 #### Articles
-- `POST /api/articles/search` - Semantic search with embeddings
+- `POST /api/articles/search` - Semantic search with embeddings (retrieval only)
 
 #### Health
 - `GET /api/health/live` - Liveness probe

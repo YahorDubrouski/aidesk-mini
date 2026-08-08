@@ -6,8 +6,10 @@ namespace Tests\Unit\Ticket\SuggestedReply;
 
 use App\DTOs\Ticket\SuggestedReply\SuggestedReplyResult;
 use App\Exceptions\SuggestedReplyFeatureDisabledException;
+use App\Models\AiAnalysis;
 use App\Models\Article;
 use App\Models\Ticket;
+use App\Models\TicketSuggestedReply;
 use App\Services\Embedding\ArticleEmbeddingService;
 use App\Services\Ticket\TicketSuggestedReplyService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -19,6 +21,7 @@ use Tests\TestCase;
  * - Feature flag must be on.
  * - Missing tickets fail loudly.
  * - Only vector-search hits are passed into grounded generation.
+ * - Each run is persisted without touching triage AiAnalysis rows.
  */
 final class TicketSuggestedReplyServiceTest extends TestCase
 {
@@ -30,7 +33,7 @@ final class TicketSuggestedReplyServiceTest extends TestCase
      * When
      * - A suggested reply is requested for a ticket.
      * Then
-     * - A feature-disabled error is thrown.
+     * - A feature-disabled error is thrown and nothing is persisted.
      */
     public function test_when_feature_flag_is_off_then_service_throws(): void
     {
@@ -42,8 +45,12 @@ final class TicketSuggestedReplyServiceTest extends TestCase
         // Assert
         $this->expectException(SuggestedReplyFeatureDisabledException::class);
 
-        // Act
-        $service->suggestForTicket($ticket->id);
+        try {
+            // Act
+            $service->suggestForTicket($ticket->id);
+        } finally {
+            $this->assertSame(0, TicketSuggestedReply::query()->count());
+        }
     }
 
     /**
@@ -74,9 +81,9 @@ final class TicketSuggestedReplyServiceTest extends TestCase
      * When
      * - A suggested reply is generated.
      * Then
-     * - The result cites that article and includes a similarity score.
+     * - The result cites that article and a suggested-reply row is stored.
      */
-    public function test_when_search_returns_articles_then_sources_match_retrieved_passages(): void
+    public function test_when_search_returns_articles_then_sources_match_and_reply_is_persisted(): void
     {
         // Arrange
         config([
@@ -94,6 +101,7 @@ final class TicketSuggestedReplyServiceTest extends TestCase
             'subject' => 'Password help',
             'body' => 'How do I reset my password?',
         ]);
+        $analysisCountBefore = AiAnalysis::query()->count();
         $service = $this->app->make(TicketSuggestedReplyService::class);
 
         // Act
@@ -106,6 +114,17 @@ final class TicketSuggestedReplyServiceTest extends TestCase
         $this->assertNotNull($result->sources[0]->similarity);
         $this->assertGreaterThan(0.0, $result->sources[0]->similarity);
         $this->assertStringContainsString('Password reset', $result->answer);
+
+        $stored = TicketSuggestedReply::query()->where('ticket_id', $ticket->id)->sole();
+        $this->assertFalse($stored->refused);
+        $this->assertNull($stored->refuse_reason);
+        $this->assertSame($result->answer, $stored->answer);
+        $this->assertSame($article->id, $stored->sources[0]['id']);
+        $this->assertSame(
+            $analysisCountBefore,
+            AiAnalysis::query()->count(),
+            'Suggested reply must not create triage AiAnalysis rows',
+        );
     }
 
     /**
@@ -114,9 +133,9 @@ final class TicketSuggestedReplyServiceTest extends TestCase
      * When
      * - A suggested reply is generated for a ticket.
      * Then
-     * - The result is refused for empty passages.
+     * - The refused result is persisted with empty sources.
      */
-    public function test_when_search_returns_nothing_then_reply_is_refused(): void
+    public function test_when_search_returns_nothing_then_refused_reply_is_persisted(): void
     {
         // Arrange
         config([
@@ -127,6 +146,7 @@ final class TicketSuggestedReplyServiceTest extends TestCase
             'subject' => 'Password help',
             'body' => 'How do I reset my password?',
         ]);
+        $analysisCountBefore = AiAnalysis::query()->count();
         $service = $this->app->make(TicketSuggestedReplyService::class);
 
         // Act
@@ -136,5 +156,15 @@ final class TicketSuggestedReplyServiceTest extends TestCase
         $this->assertTrue($result->refused);
         $this->assertSame(SuggestedReplyResult::REFUSE_REASON_EMPTY_PASSAGES, $result->refuseReason);
         $this->assertSame([], $result->sources);
+
+        $stored = TicketSuggestedReply::query()->where('ticket_id', $ticket->id)->sole();
+        $this->assertTrue($stored->refused);
+        $this->assertSame(SuggestedReplyResult::REFUSE_REASON_EMPTY_PASSAGES, $stored->refuse_reason);
+        $this->assertSame([], $stored->sources);
+        $this->assertSame(
+            $analysisCountBefore,
+            AiAnalysis::query()->count(),
+            'Suggested reply must not create triage AiAnalysis rows',
+        );
     }
 }

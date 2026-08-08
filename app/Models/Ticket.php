@@ -70,6 +70,11 @@ final class Ticket extends Model
         return $this->hasMany(AiAnalysis::class, 'ticket_id');
     }
 
+    public function suggestedReplies(): HasMany
+    {
+        return $this->hasMany(TicketSuggestedReply::class, 'ticket_id');
+    }
+
     public function feedback(): HasMany
     {
         return $this->hasMany(Feedback::class);

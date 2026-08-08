@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Checkout\CheckoutController;
 use App\Http\Controllers\Api\Health\HealthController;
 use App\Http\Controllers\Api\Stripe\StripeWebhookController;
+use App\Http\Controllers\Api\Ticket\SuggestedRepliesController;
 use App\Http\Controllers\Api\Ticket\TicketsController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,7 @@ Route::prefix('api-keys')->middleware('auth:sanctum')->group(function () {
 Route::prefix('tickets')->group(function () {
     Route::post('/', [TicketsController::class, 'store']);
     Route::get('/{ticket}', [TicketsController::class, 'show']);
+    Route::post('/{ticket}/suggested-reply', [SuggestedRepliesController::class, 'store']);
 });
 
 Route::prefix('articles')->group(function () {
